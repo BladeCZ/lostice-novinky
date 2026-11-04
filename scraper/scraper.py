@@ -2,7 +2,7 @@
 """Scraper webu mesta Lostice: hlaseni mestskeho rozhlasu, usneseni RM a ZM.
 
 Stahne PDF dokumenty, vytahne z nich strukturovany a prehledne cleneny text
-a ulozi do data/*.json. Jiz zpracovane dokumenty se znovu nestahuji (cache podle id).
+a rozparsuje usneseni na jednotliva cisla se shrnutim (ulozi do data/*.json).
 """
 import io
 import json
@@ -78,10 +78,8 @@ def format_clean_text(lines_with_pos):
         gap = item["gap"]
         h = item["h"]
 
-        # 1. Velka vertikalni mezera (nadpis / novy odstavec)
         is_big_gap = gap >= 6.5 or (h > 0 and gap >= h * 0.55)
 
-        # 2. Zacatek usneseni, cislovaneho bodu nebo uvozujiciho bloku
         is_heading_or_item = bool(
             re.match(
                 r"^(Usnesení\s+\d+|[0-9]{1,2}\.\s+|"
@@ -93,7 +91,6 @@ def format_clean_text(lines_with_pos):
             )
         )
 
-        # 3. Zvlastni radky (hlasovani, rozhodnuti)
         is_vote_or_decision = bool(
             re.match(
                 r"^(PRO[-:\s]|Poměr hlasování|RM tento program|Po projednání)",
@@ -102,7 +99,6 @@ def format_clean_text(lines_with_pos):
             )
         )
 
-        # 4. Odrazka nebo casovy rozpis ("od 8.00 do...")
         is_bullet = bool(
             re.match(r"^(?:[-–•●▪*]|\bod\s+\d{1,2}[\.:]\d{2})", txt, re.IGNORECASE)
         )
@@ -141,7 +137,6 @@ def pdf_to_text(content):
                 txt = re.sub(r"[ \t]+", " ", l["text"]).strip()
                 if not txt:
                     continue
-                # Odfiltrovat osamocena cisla stranek na hornim / dolnim okraji
                 if re.match(r"^\d{1,3}$", txt) and (l["top"] > pg.height - 60 or l["top"] < 60):
                     continue
                 gap = (l["top"] - prev_l["bottom"]) if prev_l else (15.0 if pno > 0 else 0.0)
@@ -158,6 +153,100 @@ def pdf_to_text(content):
                 prev_l = l
 
     return format_clean_text(all_lines)
+
+
+def parse_resolutions(text):
+    """Rozdeli text usneseni RM/ZM na strukturovane body vcetne shrnuti."""
+    pattern = re.compile(
+        r"(?=(?:^|\n)\s*Usnesení\s+\d+[\/\d\w\.-]+(?:\s*ze dne\s*[\d\.]+)?\s*:)",
+        re.IGNORECASE,
+    )
+    parts = pattern.split(text)
+
+    procedural = [
+        "program",
+        "zapisovatel",
+        "zapisovatelem",
+        "návrhové komise",
+        "návrhovou komisi",
+        "ověřovatel",
+        "ověřovateli",
+        "zápis z",
+        "zápisu z",
+    ]
+
+    header = ""
+    resolutions = []
+
+    for p in parts:
+        p_clean = p.strip()
+        if not p_clean:
+            continue
+        m = re.match(
+            r"^\s*Usnesení\s+(\d+[\/\d\w\.-]+(?:\s*ze dne\s*[\d\.]+)?)\s*:\s*(.*)",
+            p_clean,
+            re.DOTALL | re.IGNORECASE,
+        )
+        if not m:
+            if not header:
+                header = p_clean
+            continue
+
+        num_str = m.group(1).strip()
+        full_body = m.group(2).strip()
+
+        decision = "ROZHODNUTÍ"
+        for d in [
+            "neschvaluje",
+            "schvaluje",
+            "bere na vědomí",
+            "ukládá",
+            "pověřuje",
+            "revokuje",
+            "souhlasí",
+            "doporučuje",
+            "volí",
+            "jmenuje",
+            "děkuje",
+        ]:
+            if re.search(r"\b" + d + r"\b", full_body, re.IGNORECASE):
+                decision = d.upper()
+                break
+
+        is_proc = any(kw in full_body.lower()[:120] for kw in procedural)
+
+        body_pure = re.split(
+            r"\n+\s*\d+\.\s+(?:RM|ZM|Rada|Zastupitelstvo)\s+", full_body
+        )[0]
+        body_pure = re.sub(r"\s+PRO[-:\s].*$", "", body_pure, flags=re.IGNORECASE).strip()
+        body_clean = re.sub(r"\s+", " ", body_pure)
+
+        txt = body_clean
+        txt = re.sub(r"(\d+)\.\s+([a-záčďéěíňóřšťúůýž])", r"\1___DOT___ \2", txt)
+        txt = re.sub(r"(\d+)\.\s*(\d+)\.\s*(\d{4})", r"\1___DOT___ \2___DOT___ \3", txt)
+        txt = re.sub(
+            r"\b(Ing|Mgr|Bc|MUDr|MVDr|JUDr|PhDr|RNDr|doc|prof|č\.p|č\.o|č\.ev|odst|parc|par|p\.č|zn|k\.ú|tj|tzn|např|popř|mj|sv|vč|ul|č|s\.r\.o|a\.s|spol\.s\.r\.o|spol)\.\s*",
+            r"\1___DOT___ ",
+            txt,
+            flags=re.I,
+        )
+        txt = re.sub(r"(?<!\w)([A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ])\.\s*", r"\1___DOT___ ", txt)
+
+        parts_sent = re.split(r"\.(?:\s+(?=[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ])|$)", txt)
+        first_sent = parts_sent[0].replace("___DOT___", ".").strip()
+        if not first_sent.endswith("."):
+            first_sent += "."
+
+        resolutions.append(
+            {
+                "num": num_str,
+                "decision": decision,
+                "is_procedural": is_proc,
+                "summary": first_sent,
+                "text": full_body,
+            }
+        )
+    return header, resolutions
 
 
 def parse_date(s):
@@ -197,7 +286,6 @@ MAX_PAGES = 15
 
 
 def pages(url):
-    """Generator stranek seznamu (?page=N). Konci, kdyz stranka selze."""
     for n in range(1, MAX_PAGES + 1):
         s = soup_of(url if n == 1 else f"{url}?page={n}")
         if s is None:
@@ -235,7 +323,6 @@ def _hlaseni_items(cfg, existing, entries):
     items = []
     for id_, page, title, date in entries[: cfg["limit"]]:
         old = existing.get(id_)
-        # Pokud chceme preformatovat nove stavajici data, nacteme PDF znova pokud chybi odstavce
         if old and old.get("text") and "\n\n" in old.get("text", ""):
             items.append(old)
             continue
@@ -283,12 +370,22 @@ def _usneseni_page(s, cfg, existing, items, seen):
         title = clean(a.get_text(" "))
         url = urljoin(BASE, href)
         old = existing.get(id_)
-        if old and old.get("text") and "\n\n" in old.get("text", ""):
+        if old and old.get("text") and old.get("resolutions"):
             items.append(old)
             continue
         print("  usneseni", id_, title)
         text = download_text(url) or ""
-        items.append({"id": id_, "title": title, "date": parse_date(title), "url": url, "page": cfg["url"], "text": text})
+        header, resolutions = parse_resolutions(text)
+        items.append({
+            "id": id_,
+            "title": title,
+            "date": parse_date(title),
+            "url": url,
+            "page": cfg["url"],
+            "text": text,
+            "header": header,
+            "resolutions": resolutions
+        })
         if len(items) >= cfg["limit"]:
             break
 

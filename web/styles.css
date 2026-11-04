@@ -15,7 +15,7 @@ main{max-width:800px;margin:0 auto;padding:12px}
 .card .d{color:var(--s);font-weight:700;font-size:0.85rem;margin-bottom:4px}
 .card .t{font-weight:600;font-size:1.05rem;line-height:1.35;color:#0f172a}
 .card .p{font-size:0.9rem;color:#64748b;margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4}
-.panel{background:#e0f2fe;border-radius:12px;padding:12px 16px;margin-bottom:16px;border:1px solid #bae6fd}
+.panel{background:#e0f2fe;border-radius:12px;padding:12px 16px;margin-bottom:12px;border:1px solid #bae6fd}
 .row{display:flex;align-items:center;gap:10px;padding:4px 0}
 .row span{flex:1;font-weight:600;font-size:0.95rem;color:#0369a1}
 .row button{width:38px;height:38px;font-size:1.3rem;border-radius:50%;border:1px solid #93c5fd;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#0284c7}
@@ -25,7 +25,36 @@ main{max-width:800px;margin:0 auto;padding:12px}
 .primary:active{background:#0a2c4d}
 .pdf-btn{display:inline-block;margin-top:4px;font-size:0.9rem;color:var(--p);text-decoration:none;font-weight:600}
 .pdf-btn:hover{text-decoration:underline}
-article{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.06);border:1px solid #f1f5f9}
+
+/* Sub-tabs Přehled vs Celé znění */
+.sub-tabs{display:flex;gap:8px;margin-bottom:10px}
+.sub-tabs button{flex:1;padding:10px 14px;border:1px solid #cbd5e1;background:#fff;border-radius:8px;font-weight:600;cursor:pointer;font-size:0.95rem;color:#475569}
+.sub-tabs button.active{background:var(--p);color:#fff;border-color:var(--p)}
+
+/* Vyhledávání */
+.search-box{margin-bottom:10px}
+.search-box input{width:100%;padding:10px 16px;border:1px solid #cbd5e1;border-radius:24px;font-size:0.95rem;outline:none;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,0.04)}
+.search-box input:focus{border-color:var(--p)}
+
+/* Jump bar - rychlý přechod mezi body */
+.jump-bar{display:flex;overflow-x:auto;gap:6px;padding:6px 0;margin-bottom:12px;scrollbar-width:thin}
+.jump-chip{padding:6px 12px;background:#fff;border:1px solid #cbd5e1;border-radius:16px;font-size:0.8rem;font-weight:700;white-space:nowrap;cursor:pointer;color:var(--p)}
+.jump-chip:hover{background:#e0f2fe;border-color:var(--p)}
+
+article{background:#fff;border-radius:12px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,0.06);border:1px solid #f1f5f9}
 #d-date{color:var(--s);font-weight:700;margin-bottom:8px}
-#d-text{white-space:pre-wrap;line-height:1.6;margin-top:8px;color:#1e293b}
+#d-content{line-height:1.6;margin-top:8px;color:#1e293b}
+.res-block{padding:14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:12px;transition:background 0.2s}
+.res-block.highlight{background:#fef9c3;border-color:#facc15}
+.res-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.res-num{font-weight:800;font-size:1.05rem;color:var(--p)}
+.res-badge{font-size:0.75rem;font-weight:700;padding:3px 8px;border-radius:6px;text-transform:uppercase}
+.res-badge.schvaluje{background:#dcfce7;color:#166534}
+.res-badge.neschvaluje{background:#fee2e2;color:#991b1b}
+.res-badge.vedomi{background:#e0f2fe;color:#075985}
+.res-badge.uklada{background:#fef3c7;color:#92400e}
+.res-badge.ostatni{background:#f1f5f9;color:#475569}
+.res-body{white-space:pre-wrap;font-size:1rem;line-height:1.55}
+.res-summary-card{padding:12px 14px;background:#fff;border:1px solid #e2e8f0;border-left:4px solid var(--p);border-radius:6px;margin-bottom:8px}
 .msg{padding:32px;text-align:center;color:#64748b;font-size:1.05rem}
+mark{background:#fef08a;font-weight:bold;padding:0 2px;border-radius:2px}

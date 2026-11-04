@@ -10,19 +10,49 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<header><button id="back" hidden aria-label="Zpět">←</button><h1 id="title">Loštice novinky</h1>
-<button id="refresh" aria-label="Obnovit">⟳</button></header>
+<header>
+  <button id="back" hidden aria-label="Zpět">←</button>
+  <h1 id="title">Loštice novinky</h1>
+  <button id="refresh" aria-label="Obnovit">⟳</button>
+</header>
 
 <main id="list-view"><div id="list"></div></main>
 
 <main id="detail-view" hidden>
   <div class="panel">
-    <div class="row"><span>Velikost textu</span><button id="font-minus">−</button><b id="font-val"></b><button id="font-plus">+</button></div>
-    <div class="row"><span>Rychlost čtení</span><button id="rate-minus">−</button><b id="rate-val"></b><button id="rate-plus">+</button></div>
+    <div class="row">
+      <span>Velikost textu</span>
+      <button id="font-minus">−</button>
+      <b id="font-val">100 %</b>
+      <button id="font-plus">+</button>
+    </div>
+    <div class="row">
+      <span>Rychlost čtení</span>
+      <button id="rate-minus">−</button>
+      <b id="rate-val">1.0×</b>
+      <button id="rate-plus">+</button>
+    </div>
     <button id="speak" class="primary">▶ Přečíst nahlas</button>
-    <a id="pdf" target="_blank" rel="noopener">Otevřít původní PDF</a>
+    <a id="pdf" class="pdf-btn" target="_blank" rel="noopener">📄 Otevřít původní PDF</a>
   </div>
-  <article><div id="d-date"></div><div id="d-text"></div></article>
+
+  <div id="sub-tabs" class="sub-tabs" hidden>
+    <button id="tab-summary" class="active">📌 Přehled usnesení</button>
+    <button id="tab-full">📄 Celé znění</button>
+  </div>
+
+  <!-- Vyhledávací lišta pro usnesení -->
+  <div id="search-box" class="search-box" hidden>
+    <input type="text" id="search-input" placeholder="Hledat v usnesení (např. dotace, odpad, 90/2339)...">
+  </div>
+
+  <!-- Rychlé scrollování mezi body -->
+  <div id="jump-bar" class="jump-bar" hidden></div>
+
+  <article id="detail-article">
+    <div id="d-date"></div>
+    <div id="d-content"></div>
+  </article>
 </main>
 
 <nav>
@@ -30,6 +60,7 @@
   <button data-tab="rm">🏛️<span>Rada</span></button>
   <button data-tab="zm">👥<span>Zastupitelstvo</span></button>
 </nav>
+
 <script src="app.js"></script>
 </body>
 </html>

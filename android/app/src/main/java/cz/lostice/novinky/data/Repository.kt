@@ -16,13 +16,23 @@ enum class Category(val file: String, val label: String, val shortLabel: String,
     ZM("zm", "Usnesení zastupitelstva", "Zastupitelstvo", "Nové usnesení zastupitelstva")
 }
 
+data class Resolution(
+    val num: String = "",
+    val decision: String = "",
+    val is_procedural: Boolean = false,
+    val summary: String = "",
+    val text: String = ""
+)
+
 data class Item(
     val id: String = "",
     val title: String = "",
     val date: String? = null,
     val url: String = "",
     val page: String = "",
-    val text: String = ""
+    val text: String = "",
+    val header: String = "",
+    val resolutions: List<Resolution> = emptyList()
 ) {
     /** Datum ve formátu 3. 11. 2026 */
     val displayDate: String
