@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-04T17:19:45+00:00",
+ "updated": "2026-11-04T18:10:00Z",
  "source": "https://www.mu-lostice.cz/obcan/hlas-lostic/",
  "items": [
   {
@@ -9,7 +9,45 @@
    "url": "https://www.mu-lostice.cz/modules/file_storage/download.php?file=22437456%7C1035&inline=1",
    "a5_url": "pdf_a5/hlas-22437456-1035.pdf",
    "pages_count": 33,
-   "text": "Hlas Loštic - podzim 2026\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem 33 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor."
+   "text": "Hlas Loštic - podzim 2026\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v mobilu (celkem 33 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor.",
+   "toc": [
+    {
+     "page": 6,
+     "title": "KDU- Č SL – NOVÍ LIDOVCI"
+    },
+    {
+     "page": 8,
+     "title": "SPOLEČNĚ PRO LOŠTICE Společná šance 2026 Občané pro Loštice, sdružení nezávislých kandidátů"
+    },
+    {
+     "page": 10,
+     "title": "Společně pro Loštice, Žádlovice a Vlčice"
+    },
+    {
+     "page": 12,
+     "title": "Ohlédnutí za koncem školního roku"
+    },
+    {
+     "page": 16,
+     "title": "Angličtina v Městské knihovně Loštice Novinky v naší knihovně: e-výpůjčky i Albi knížky"
+    },
+    {
+     "page": 18,
+     "title": "Odpoledne plné vzpomínek INFORMACE Z VLČIC"
+    },
+    {
+     "page": 24,
+     "title": "Podnikáme odpovědně ve městě, kde žijeme i pracujeme"
+    },
+    {
+     "page": 26,
+     "title": "Tichý genius Moravy Jan Havelka V Mohelnici vzniká ZÓNA24. Otevíráme 10. října!"
+    },
+    {
+     "page": 28,
+     "title": "Za gramofonovou deskou AGAPITUS OLDŘICH BLÁHA"
+    }
+   ]
   },
   {
    "id": "776ca237-1021",
@@ -18,7 +56,101 @@
    "url": "https://www.mu-lostice.cz/modules/file_storage/download.php?file=776ca237%7C1021&inline=1",
    "a5_url": "pdf_a5/hlas-776ca237-1021.pdf",
    "pages_count": 36,
-   "text": "Hlas Loštic - léto 2026\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem 36 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor."
+   "text": "Hlas Loštic - léto 2026\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v mobilu (celkem 36 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor.",
+   "toc": [
+    {
+     "page": 4,
+     "title": "Krásné prázdniny"
+    },
+    {
+     "page": 5,
+     "title": "SUOT / Sdružení za uchování občanských tradic / únor 2026 - duben 2026 František a Jarmila 17. 4. 1976"
+    },
+    {
+     "page": 6,
+     "title": "TISKOVÁ ZPRÁVA"
+    },
+    {
+     "page": 7,
+     "title": "Nové sportoviště v areálu TJ Slavoj Loštice otevírá své brány veřejnosti. Rezervace jsou zdarma a online"
+    },
+    {
+     "page": 9,
+     "title": "Spolek Údolí Třebůvky"
+    },
+    {
+     "page": 10,
+     "title": "Rozkvetlé jaro v Duhové školce"
+    },
+    {
+     "page": 12,
+     "title": "Blíží se konec školního roku"
+    },
+    {
+     "page": 14,
+     "title": "Zapojení žáků ZŠ Loštice v projektu Příběhy našich sousedů"
+    },
+    {
+     "page": 15,
+     "title": "ZUŠ A. Kašpara Loštice má za sebou mimořádně úspěšný rok"
+    },
+    {
+     "page": 16,
+     "title": "Ohlédnutí za činností Spolku rodičů a přátel MŠ Loštice"
+    },
+    {
+     "page": 18,
+     "title": "Putování za loštickým tvarůžkem"
+    },
+    {
+     "page": 19,
+     "title": "Náročná sezóna stolních tenistů TJ Slavoj Loštice Ze života šachového klubu Loštice"
+    },
+    {
+     "page": 20,
+     "title": "Mistrovství republiky v páce v Lošticích"
+    },
+    {
+     "page": 21,
+     "title": "Husův sbor Církve československé husitské v Lošticích"
+    },
+    {
+     "page": 22,
+     "title": "Cíl projektu Kameny zmizelých v Lošticích naplněn Kniha v lázni a Kreativní dílna v loštické synagoze"
+    },
+    {
+     "page": 23,
+     "title": "Po vydání knihy „Táta Hugo Šilberský - milovník svého kraje“ odkrývá tátův archiv své tajemství na pokračování"
+    },
+    {
+     "page": 25,
+     "title": "František Kubelka"
+    },
+    {
+     "page": 26,
+     "title": "Kryštof Alois Lautner,"
+    },
+    {
+     "page": 27,
+     "title": "Pískovcový hraničník ve Vlčicích"
+    },
+    {
+     "page": 30,
+     "title": "150 let historie, 7 800 kilo tvarůžků a 28 000 lidí: festival v Olomouci lámal rekordy"
+    },
+    {
+     "page": 31,
+     "title": "dTest - Varování"
+    },
+    {
+     "page": 32,
+     "title": "Ochrana ovzduší v Lošticích"
+    },
+    {
+     "page": 33,
+     "title": "49. ročník Zlaté podkovy"
+    }
+   ]
   },
   {
    "id": "adb527a3-974",
@@ -27,7 +159,49 @@
    "url": "https://www.mu-lostice.cz/modules/file_storage/download.php?file=adb527a3%7C974&inline=1",
    "a5_url": "pdf_a5/hlas-adb527a3-974.pdf",
    "pages_count": 33,
-   "text": "Hlas Loštic - jaro 2026\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem 33 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor."
+   "text": "Hlas Loštic - jaro 2026\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v mobilu (celkem 33 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor.",
+   "toc": [
+    {
+     "page": 2,
+     "title": "Nabídka stavebních parcel k prodeji"
+    },
+    {
+     "page": 4,
+     "title": "SUOT – Sdružení pro uchování občanských tradic Michal Válek."
+    },
+    {
+     "page": 6,
+     "title": "Zprávičky z Duhové školičky"
+    },
+    {
+     "page": 8,
+     "title": "Zimní měsíce na základní škole"
+    },
+    {
+     "page": 10,
+     "title": "Vítání jara 2026"
+    },
+    {
+     "page": 14,
+     "title": "Jízdní řády autobusů z Loštic a do Loštic + odjezdy vlaků 2026 z Moravičan a Zábřehu"
+    },
+    {
+     "page": 18,
+     "title": "Pozvánka do Památníku Adolfa Kašpara na novou výstavu Malíř Jan Smital (1896–1955)"
+    },
+    {
+     "page": 20,
+     "title": "Blíží se Velikonoce!"
+    },
+    {
+     "page": 24,
+     "title": "Mládí vpřed"
+    },
+    {
+     "page": 26,
+     "title": "Charitativní ZUMBA neděle – po šesté a určitě ne naposledy Co přinesl program Nová zelená úsporám za dobu své existence?"
+    }
+   ]
   },
   {
    "id": "851b3a07-925",
@@ -36,7 +210,129 @@
    "url": "https://www.mu-lostice.cz/modules/file_storage/download.php?file=851b3a07%7C925&inline=1",
    "a5_url": "pdf_a5/hlas-851b3a07-925.pdf",
    "pages_count": 48,
-   "text": "Hlas Loštic - zima 2025\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem 48 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor."
+   "text": "Hlas Loštic - zima 2025\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v mobilu (celkem 48 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor.",
+   "toc": [
+    {
+     "page": 1,
+     "title": "HH LL AASS LLOOŠŠTTIICC"
+    },
+    {
+     "page": 3,
+     "title": "Úvodník Město Loštice vybudovalo nové parkoviště u zdravotního střediska"
+    },
+    {
+     "page": 7,
+     "title": "URNOVÝ HÁJ LOŠTICE"
+    },
+    {
+     "page": 8,
+     "title": "Město Loštice podporuje obnovu a modernizaci bydlení pro- střednictvím Fondu rozvoje bydlení"
+    },
+    {
+     "page": 9,
+     "title": "Loštice připravují nové stavební parcely v lokalitě Hrnčířská"
+    },
+    {
+     "page": 10,
+     "title": "Úprava školní zahrady Revitalizace sportovního areálu v Lošticích dokončena"
+    },
+    {
+     "page": 11,
+     "title": "Úpravy veřejného prostoru pokračují i v Žádlovicích"
+    },
+    {
+     "page": 12,
+     "title": "Nová komunitní zahrada Na Pešti Nová průmyslová zóna v Lošticích: strategický projekt pro rozvoj města i regionu"
+    },
+    {
+     "page": 15,
+     "title": "Blahopřejeme"
+    },
+    {
+     "page": 16,
+     "title": "První měsíce nového školního roku v MŠ Loštice"
+    },
+    {
+     "page": 17,
+     "title": "Střípky ze základní školy"
+    },
+    {
+     "page": 19,
+     "title": "ZUŠ A. Kašpara Loštice: od prvního školního dne k vánočním koncertům PODĚKOVÁNÍ od SDH Žádlovice"
+    },
+    {
+     "page": 23,
+     "title": "Genius loci Loštice – Od poháru po současnost"
+    },
+    {
+     "page": 25,
+     "title": "Genius Loci Loštice Poděkování za Loštické patrioty"
+    },
+    {
+     "page": 26,
+     "title": "Poděkování od SDH Loštice ŘÍMSKOKATOLICKÁ FARNOST Loštice – pozvánka"
+    },
+    {
+     "page": 27,
+     "title": "Tříkrálová sbírka 1.–14. ledna 2026"
+    },
+    {
+     "page": 28,
+     "title": "INFORMACE Z VLČIC CYKLOKROS OPĚT V ŽÁDLOVICÍCH"
+    },
+    {
+     "page": 29,
+     "title": "UZAVŘENA"
+    },
+    {
+     "page": 31,
+     "title": "Mistrovství České republiky v Armwrestlingu 2026 Loštice 27.–28. března 2026 Příspěvek do Hlasu Loštic 11/2025:"
+    },
+    {
+     "page": 32,
+     "title": "Příspěvek do vánočního Hlasu Loštic 2025 od MO ČRS Loštice"
+    },
+    {
+     "page": 34,
+     "title": "Výlety a zájezdy loštických turistů v roce 2025"
+    },
+    {
+     "page": 37,
+     "title": "Činnost jezdeckého klubu Loštice v roce 2025"
+    },
+    {
+     "page": 38,
+     "title": "Olomoucké tvarůžky omládly. Ikonická značka dostala novou tvář"
+    },
+    {
+     "page": 39,
+     "title": "Ludvík Kopka stolař, intarzista a restaurátor"
+    },
+    {
+     "page": 40,
+     "title": "Alexandr Kaniščev zařazen do juniorské reprezentace ČR v dráhové cyklistice pro rok 2026"
+    },
+    {
+     "page": 41,
+     "title": "Noví občané loštického betlému"
+    },
+    {
+     "page": 42,
+     "title": "Po vydání knihy „Táta Hugo Šilberský – milovník svého kraje“ tátův archiv odkrývá své tajemství na pokračování"
+    },
+    {
+     "page": 45,
+     "title": "Poděkování městu za rekonstrukci ulice Sídliště Verše z tvorby Radka Štencla"
+    },
+    {
+     "page": 46,
+     "title": "Ohleduplnost, která nic nestojí…"
+    },
+    {
+     "page": 48,
+     "title": "OHLÉDNUTÍ ZA VÝSTAVOU GENIUS LOCI LOŠTICE OD POHÁRU PO SOUČASNOST"
+    }
+   ]
   },
   {
    "id": "c4c0b81c-893",
@@ -45,7 +341,105 @@
    "url": "https://www.mu-lostice.cz/modules/file_storage/download.php?file=c4c0b81c%7C893&inline=1",
    "a5_url": "pdf_a5/hlas-c4c0b81c-893.pdf",
    "pages_count": 40,
-   "text": "Hlas Loštic - podzim 2025\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem 40 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor."
+   "text": "Hlas Loštic - podzim 2025\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v mobilu (celkem 40 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor.",
+   "toc": [
+    {
+     "page": 1,
+     "title": "HH LL AASS LLOOŠŠTTIICC"
+    },
+    {
+     "page": 3,
+     "title": "Úvodník Anonymní podání na Policii ČR na město Loštice"
+    },
+    {
+     "page": 4,
+     "title": "Česko pod environmentální lupou EU*"
+    },
+    {
+     "page": 5,
+     "title": "Změny ve financování nepedagogických pracovníků a postupné slučování škol do větších celků"
+    },
+    {
+     "page": 9,
+     "title": "Blahopřejeme"
+    },
+    {
+     "page": 10,
+     "title": "Třídíte správně?"
+    },
+    {
+     "page": 11,
+     "title": "Žádost Ohlédnutí za koncem školního roku 2024/2025"
+    },
+    {
+     "page": 13,
+     "title": "Příspěvek za MKS Loštice Městská knihovna Loštice Ohlédnutí za koupací sezó - nou na koupališti:"
+    },
+    {
+     "page": 14,
+     "title": "Výstava Genius loci Loštice"
+    },
+    {
+     "page": 17,
+     "title": "BBBBBBBBBByyyyyyyyyylllllllllloooooooooo nnnnnnnnnnáááááááááámmmmmmmmmm 44444444440000000000!!!!!!!!!!"
+    },
+    {
+     "page": 18,
+     "title": "SPOUŠTÍME KURZY CHYTRÝCH TELEFONŮ MODERNÍ SENIOR V LOŠTICÍCH. POJĎTE SE S NÁMI VZDĚLÁVAT"
+    },
+    {
+     "page": 19,
+     "title": "POCHOD ZA HODOVYM KOLÁČKEM"
+    },
+    {
+     "page": 20,
+     "title": "Do sběrného dvora jen s rozloženým a roztříděným nábytkem"
+    },
+    {
+     "page": 21,
+     "title": "NEBUDE PODZIMNÍ VÝSTAVA."
+    },
+    {
+     "page": 23,
+     "title": "Mohelnicko-loštický Capáček"
+    },
+    {
+     "page": 24,
+     "title": "Junák – 90. výročí skautingu v Lošticích"
+    },
+    {
+     "page": 26,
+     "title": "Posezení seniorů v zámeckém parku plné vzpomínek a smíchu"
+    },
+    {
+     "page": 27,
+     "title": "Příspěvek do Hlasu Loštic TJ Slavoj Loštice z.s. v roce 2025"
+    },
+    {
+     "page": 30,
+     "title": "Rybářský kroužek"
+    },
+    {
+     "page": 32,
+     "title": "Loštické nakladatelství Medusa vydá temnou novelu Mary Shelley Mathilda"
+    },
+    {
+     "page": 33,
+     "title": "Vzpomínka na Jana Smitala"
+    },
+    {
+     "page": 36,
+     "title": "Z tvorby Zdeňka Horňáka Strážce Loštěc; obecní kocór Pupínek"
+    },
+    {
+     "page": 37,
+     "title": "Komentář k usnesení ZM 19/16/2025 ze dne 23.06.2025"
+    },
+    {
+     "page": 38,
+     "title": "Udavačství je nejubožejší projev pomsty"
+    }
+   ]
   },
   {
    "id": "411b2e6c-874",
@@ -54,7 +448,129 @@
    "url": "https://www.mu-lostice.cz/modules/file_storage/download.php?file=411b2e6c%7C874&inline=1",
    "a5_url": "pdf_a5/hlas-411b2e6c-874.pdf",
    "pages_count": 40,
-   "text": "Hlas Loštic - léto 2025\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem 40 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor."
+   "text": "Hlas Loštic - léto 2025\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v mobilu (celkem 40 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor.",
+   "toc": [
+    {
+     "page": 1,
+     "title": "HH LLAASS LLOOŠŠTTIICC"
+    },
+    {
+     "page": 3,
+     "title": "Úvodník • • •"
+    },
+    {
+     "page": 4,
+     "title": "LOŠTICE ZÍSKALY DOTACI NA CHYTRÝ INFORMAČNÍ PANEL PRO AUTOBUSOVÉ NÁDRAŽÍ • • • • • • • •"
+    },
+    {
+     "page": 6,
+     "title": "NOVINKY NA LETNÍM KOUPALIŠTI V LOŠTICÍCH: BEZBARIÉROVÝ VSTUP I LETNÍ KONCERTY • •"
+    },
+    {
+     "page": 7,
+     "title": "MĚSTO ZAVÁDÍ NOVÝ KOEFICIENT DANĚ Z NEMOVITOSTI PRO NEUDRŽOVANÉ A DLOUHODOBĚ NEOBYDLENÉ OBJEKTY • • •"
+    },
+    {
+     "page": 8,
+     "title": "MĚSTO ROZŠIŘUJE SPORTOVNÍ AREÁL – KOUPILO NEMOVITOST NA MALÉM NÁMĚSTÍ • • • • •"
+    },
+    {
+     "page": 9,
+     "title": "Muzikál Šakalí léta Muzikál Šakalí léta"
+    },
+    {
+     "page": 10,
+     "title": "SUOT Unikátní plán židovské čtvrti v Lošticích z roku 1727 v UNESCO"
+    },
+    {
+     "page": 11,
+     "title": "BBBBBBBBBByyyyyyyyyylllllllllloooooooooo nnnnnnnnnnáááááááááámmmmmmmmmm 44444444440000000000!!!!!!!!!!"
+    },
+    {
+     "page": 14,
+     "title": "Co je nového v Duhové školce"
+    },
+    {
+     "page": 16,
+     "title": "Novinky ze základní školy"
+    },
+    {
+     "page": 18,
+     "title": "ZÁKLADNÍ UMĚLECKÁ ŠKOLA A. KAŠPARA LOŠTICE závěr školního roku ve znamení radosti, kreativity a úspěchů"
+    },
+    {
+     "page": 19,
+     "title": "Městská knihovna Loštice"
+    },
+    {
+     "page": 20,
+     "title": "Co se u nás dělo aneb školní rok plný zážitků."
+    },
+    {
+     "page": 21,
+     "title": "25 let uplynulo jako voda a v Lošticích se opět slaví!"
+    },
+    {
+     "page": 22,
+     "title": "12. 4. Velikonoce v Žádlovicích"
+    },
+    {
+     "page": 23,
+     "title": "Zahrada spravedlivých"
+    },
+    {
+     "page": 24,
+     "title": "PĚKNÁ PŘÍRODA A HANÁCKÁ SVAČINA LÁKÁ"
+    },
+    {
+     "page": 25,
+     "title": "10.00 – 19.00"
+    },
+    {
+     "page": 26,
+     "title": "Junák – český skaut, středisko Šíp Loštice"
+    },
+    {
+     "page": 28,
+     "title": "Větrník"
+    },
+    {
+     "page": 29,
+     "title": "Vážení spoluobčané"
+    },
+    {
+     "page": 30,
+     "title": "48. ročník ZLATÉ PODKOVY"
+    },
+    {
+     "page": 32,
+     "title": "Úspěšná sezóna stolních tenistů TJ Slavoj Loštice Ze života šachového klubu Loštice"
+    },
+    {
+     "page": 33,
+     "title": "Literární festival autorských čtení Kniha v lázni Synagoga Loštice 9. a 10. července 2025"
+    },
+    {
+     "page": 34,
+     "title": "KNIHA V LAZNI"
+    },
+    {
+     "page": 35,
+     "title": "Kreativní dílna „živého psaní”"
+    },
+    {
+     "page": 36,
+     "title": "VELIKONOČNÍ RŮŽE vyřezal i letos loštický řezbář Jaroslav Beneš."
+    },
+    {
+     "page": 37,
+     "title": "Ušetřete s kvalitními produkty pro provoz i domácnost – přímo od loštického výrobce"
+    },
+    {
+     "page": 40,
+     "title": "125. VÝROČÍ LÉKÁRNY V LOŠTICÍCH"
+    }
+   ]
   },
   {
    "id": "170cc20e-854",
@@ -63,7 +579,113 @@
    "url": "https://www.mu-lostice.cz/modules/file_storage/download.php?file=170cc20e%7C854&inline=1",
    "a5_url": "pdf_a5/hlas-170cc20e-854.pdf",
    "pages_count": 40,
-   "text": "Hlas Loštic - jaro 2025\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem 40 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor."
+   "text": "Hlas Loštic - jaro 2025\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v mobilu (celkem 40 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor.",
+   "toc": [
+    {
+     "page": 1,
+     "title": "HHLLAASS LLOOŠŠTTIICC"
+    },
+    {
+     "page": 3,
+     "title": "Úvodník PROTIPOVODŇOVÁ OPATŘENÍ ŽÁDLOVICE"
+    },
+    {
+     "page": 4,
+     "title": "INFORMACE k plánované rekonstrukci komunikací a souvi - sejících úprav v ulici Sídliště"
+    },
+    {
+     "page": 5,
+     "title": "Revitalizace sportovního areálu v Lošticích 1. etapa Areál průmyslové zóny ZLKL Loštice"
+    },
+    {
+     "page": 6,
+     "title": "Nová lokalita bydlení ulice Hrnčířská"
+    },
+    {
+     "page": 7,
+     "title": "Odpočívka pro kamiony"
+    },
+    {
+     "page": 8,
+     "title": "Parkoviště u zdravotního střediska na ulici Havelkova Dopravní obslužnost města Loštice"
+    },
+    {
+     "page": 10,
+     "title": "Co se děje v Duhové školce"
+    },
+    {
+     "page": 12,
+     "title": "Základní škola slaví 130. výročí založení"
+    },
+    {
+     "page": 13,
+     "title": "Ze života naší školy"
+    },
+    {
+     "page": 15,
+     "title": "Základní umělecká škola A. Kašpara Loštice"
+    },
+    {
+     "page": 16,
+     "title": "Genius loci Loštice – od poháru po současnost"
+    },
+    {
+     "page": 19,
+     "title": "z Moravičan a ze"
+    },
+    {
+     "page": 20,
+     "title": "Odjezdy autobus ů z Loštic Odjezd osbních vlak ů z Moravi č an a Záb ř ehu"
+    },
+    {
+     "page": 22,
+     "title": "z Moravičan a ze z Moravičan a ze"
+    },
+    {
+     "page": 23,
+     "title": "ROK 2024 U HASIČŮ Z LOŠTIC"
+    },
+    {
+     "page": 24,
+     "title": "Je ještě prostor pro další snižování množství odpadu?"
+    },
+    {
+     "page": 25,
+     "title": "VÍTÁNÍ JARA"
+    },
+    {
+     "page": 26,
+     "title": "Výstava Adolf Lang (1895–1983) – Touha po poznání"
+    },
+    {
+     "page": 27,
+     "title": "Pocta významnému loštickému rodákovi panu profesoru Hlůzovi Poděkování"
+    },
+    {
+     "page": 29,
+     "title": "Olomoucké tvarůžky mají nového vedoucího výroby. Chystají se inovace výrobních procesů i nové produkty"
+    },
+    {
+     "page": 30,
+     "title": "Nová kniha loštického nakladatelství Medusa"
+    },
+    {
+     "page": 31,
+     "title": "Zdeněk Horňák vybrán mezi MLADÉ TALENTY PARDUBICKÉHO KRAJE"
+    },
+    {
+     "page": 32,
+     "title": "Charitativní ZUMBA neděle – pátý ročník"
+    },
+    {
+     "page": 33,
+     "title": "Vzpomínky na pivovar Pivovar Loštice"
+    },
+    {
+     "page": 34,
+     "title": "Suchý poldr nad Žádlovicemi"
+    }
+   ]
   },
   {
    "id": "54ddf4c0-833",
@@ -72,7 +694,81 @@
    "url": "https://www.mu-lostice.cz/modules/file_storage/download.php?file=54ddf4c0%7C833&inline=1",
    "a5_url": "pdf_a5/hlas-54ddf4c0-833.pdf",
    "pages_count": 41,
-   "text": "Hlas Loštic - zima 2024\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem 41 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor."
+   "text": "Hlas Loštic - zima 2024\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v mobilu (celkem 41 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor.",
+   "toc": [
+    {
+     "page": 1,
+     "title": "HHLLAASS LLOOŠŠTTIICC"
+    },
+    {
+     "page": 2,
+     "title": "PPFF 22002255"
+    },
+    {
+     "page": 4,
+     "title": "SUOT Přání od redakční rady"
+    },
+    {
+     "page": 6,
+     "title": "INFORMACE Z MĚSTA LOŠTICE"
+    },
+    {
+     "page": 14,
+     "title": "Aktuality z Duhové školky"
+    },
+    {
+     "page": 16,
+     "title": "Zprávy ze základní školy"
+    },
+    {
+     "page": 18,
+     "title": "Základní umělecká škola A. Kašpara Loštice Knihovna oznámení brig. gen. Ing. KAREL KOLÁŘÍK"
+    },
+    {
+     "page": 20,
+     "title": "Aktuality z loštického divadla VELKÉ SRDEČNÉ PODĚKOVÁNÍ PODĚKOVÁNÍ od SDH Žádlovice"
+    },
+    {
+     "page": 22,
+     "title": "Stolní tenisté TJ Slavoj Loštice zahájili soutěžní ročník 2024/2025"
+    },
+    {
+     "page": 24,
+     "title": "Příspěvek do vánočního Hlasu Loštic 2024 od MO ČRS Loštice Zájezdová turistika loštických turistů v uplynulém roce 2024"
+    },
+    {
+     "page": 26,
+     "title": "Ze života šachového klubu Loštice HODY VE VLČICÍCH, POCHOD ZA HODOVÝM KOLÁČKEM VÝBOR SENIORŮ LOŠTICE"
+    },
+    {
+     "page": 28,
+     "title": "VÁNOČNÍ ŠANCE Vánoční bohoslužby 2024 POVODNĚ V LOŠTICÍCH"
+    },
+    {
+     "page": 30,
+     "title": "VELKÁ VODA Alexandr Kaniščev obhájil titul Mistra ČR v dráhové cyklistice"
+    },
+    {
+     "page": 32,
+     "title": "Cyklokros se opět vrátil do Žádlovic LÉTÁJÍCÍ ČÍTÁRNA NOVINKY Z LOŠTICKÉHO BETLÉMU"
+    },
+    {
+     "page": 34,
+     "title": "Zvon ve věži kapličky ve Vlčicích Když se někdo rozhodne stát skautem Černé oči – 35 let od sametové revoluce"
+    },
+    {
+     "page": 36,
+     "title": "V Á O A"
+    },
+    {
+     "page": 38,
+     "title": "REALITY"
+    },
+    {
+     "page": 40,
+     "title": "ZUŠ A. Kašpara Loštice Vám přeje klidné a pohodové vánoční svátky a pohodové"
+    }
+   ]
   },
   {
    "id": "6bf984a9-812",
@@ -81,7 +777,77 @@
    "url": "https://www.mu-lostice.cz/modules/file_storage/download.php?file=6bf984a9%7C812&inline=1",
    "a5_url": "pdf_a5/hlas-6bf984a9-812.pdf",
    "pages_count": 41,
-   "text": "Hlas Loštic - podzim 2024\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem 41 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor."
+   "text": "Hlas Loštic - podzim 2024\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v mobilu (celkem 41 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor.",
+   "toc": [
+    {
+     "page": 1,
+     "title": "HHLLAASS LLOOŠŠTTIICC"
+    },
+    {
+     "page": 2,
+     "title": "KULTURNÍ NABÍDKA"
+    },
+    {
+     "page": 4,
+     "title": "− − − − − − Pokračování těžby v lokalitě Kozí Vrch v k. ú. Loštice"
+    },
+    {
+     "page": 6,
+     "title": "Odpočívka pro kamiony MĚSTSKÁ POLICIE LOŠTICE Modernizace objektu ZŠ v Lošticích"
+    },
+    {
+     "page": 8,
+     "title": "SUOT Bezúročné půjčky od města na opravy nemovitostí!"
+    },
+    {
+     "page": 12,
+     "title": "PPPPTTTTTTTTAAAAAAAAČČČČÍÍÍÍÍÍÍÍÍÍ PPPPUUUUTTTTOOOOOOOOVVVVÁÁÁÁNNNNÍÍÍÍ"
+    },
+    {
+     "page": 14,
+     "title": "Ohlédnutí za závěrem školního roku na základní škole"
+    },
+    {
+     "page": 16,
+     "title": "Základní umělecká škola A. Kašpara Loštice"
+    },
+    {
+     "page": 20,
+     "title": "Akce v loštické knihovně do konce roku 2024 PODĚKOVÁNÍ Informace z Vlčic Posezení seniorů v Žádlovicích"
+    },
+    {
+     "page": 22,
+     "title": "Mladí hasiči soutěžili v TFA"
+    },
+    {
+     "page": 24,
+     "title": "Dětský den a nové vybavení pro mladé fotbalisty Dotace pro TJ Slavoj Loštice z.s. a spolupráce se sponzory"
+    },
+    {
+     "page": 26,
+     "title": "Capáček Junák – český skaut, středisko Šíp Loštice"
+    },
+    {
+     "page": 28,
+     "title": "MOŠTOVÁNÍ JABLEK"
+    },
+    {
+     "page": 30,
+     "title": "NOVÝ TITUL LOŠTICKÉHO NAKLADATELSTVÍ MEDUSA"
+    },
+    {
+     "page": 32,
+     "title": "Literární festival KNIHA V LÁZNI 2024"
+    },
+    {
+     "page": 34,
+     "title": "Milovník tohoto kraje, malíř Hugo Šilberský, rodák z Loštic"
+    },
+    {
+     "page": 38,
+     "title": "RORÝS OBECNÝ K VÝROČÍ HUGA ŠILBERSKÉHO"
+    }
+   ]
   },
   {
    "id": "e980e18c-790",
@@ -90,7 +856,73 @@
    "url": "https://www.mu-lostice.cz/modules/file_storage/download.php?file=e980e18c%7C790&inline=1",
    "a5_url": "pdf_a5/hlas-e980e18c-790.pdf",
    "pages_count": 45,
-   "text": "Hlas Loštic - léto 2024\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem 45 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor."
+   "text": "Hlas Loštic - léto 2024\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v mobilu (celkem 45 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor.",
+   "toc": [
+    {
+     "page": 1,
+     "title": "HHLLAASS LLOOŠŠTTIICC"
+    },
+    {
+     "page": 2,
+     "title": "Slovo starostky"
+    },
+    {
+     "page": 6,
+     "title": "Výsledek ankety – název ulice nová lokalita bydlení, směr Vlčice"
+    },
+    {
+     "page": 16,
+     "title": "REALITY"
+    },
+    {
+     "page": 18,
+     "title": "Městská knihovna Loštice"
+    },
+    {
+     "page": 20,
+     "title": "Koupaliště Loštice Aktuality z Duhové školky"
+    },
+    {
+     "page": 22,
+     "title": "Poděkování Jaro na základní škole"
+    },
+    {
+     "page": 24,
+     "title": "Základní umělecká škola A. Kašpara Loštice Městské kulturní středisko Loštice – ohlédnutí"
+    },
+    {
+     "page": 26,
+     "title": "Zdeněk Večeř – Král Tvarůžek I."
+    },
+    {
+     "page": 28,
+     "title": "Ohlédnutí za činností Spolku rodičů a přátel MŠ Loštice"
+    },
+    {
+     "page": 30,
+     "title": "Junák – český skaut, středisko Šíp Loštice"
+    },
+    {
+     "page": 32,
+     "title": "Větrník Větrník v synagoze"
+    },
+    {
+     "page": 38,
+     "title": "JJJIIIŽŽŽ OOOTTTEEEVVVŘŘŘEEENNNOOO"
+    },
+    {
+     "page": 40,
+     "title": "„Bard“ české ilustrace Adolf Kašpar Informace ze společnosti A.W. spol. s r. o. Otevření nové části cyklostezky se blíží"
+    },
+    {
+     "page": 42,
+     "title": "Olečka"
+    },
+    {
+     "page": 44,
+     "title": "SOUND OF SUMMER"
+    }
+   ]
   },
   {
    "id": "abab9b92-772",
@@ -99,7 +931,93 @@
    "url": "https://www.mu-lostice.cz/modules/file_storage/download.php?file=abab9b92%7C772&inline=1",
    "a5_url": "pdf_a5/hlas-abab9b92-772.pdf",
    "pages_count": 36,
-   "text": "Hlas Loštic - jaro 2024\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem 36 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor."
+   "text": "Hlas Loštic - jaro 2024\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v mobilu (celkem 36 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor.",
+   "toc": [
+    {
+     "page": 4,
+     "title": "Anketa-budoucí název ulice, nová lokalita bydlení, směr Vlčice Vážení nájemci hrobových míst,"
+    },
+    {
+     "page": 5,
+     "title": "Deratizace"
+    },
+    {
+     "page": 6,
+     "title": "Místní akční plánování na Mohelnicku pokračuje, zapojit se můžete i vy"
+    },
+    {
+     "page": 7,
+     "title": "Bílá zima v Duhové školce"
+    },
+    {
+     "page": 10,
+     "title": "Ohlédnutí za činností naší základní školy v zimních měsících"
+    },
+    {
+     "page": 12,
+     "title": "Základní umělecká škola A. Kašpara Loštice"
+    },
+    {
+     "page": 14,
+     "title": "Výbor seniorů v Lošticích"
+    },
+    {
+     "page": 16,
+     "title": "ROK 2023 U HASIČŮ Z LOŠTIC"
+    },
+    {
+     "page": 17,
+     "title": "z Moravičan a ze"
+    },
+    {
+     "page": 18,
+     "title": "Odjezd osbních vlaků z Moravičan a Zábřehu Směr => Linka Čas odjezdů "
+    },
+    {
+     "page": 20,
+     "title": "z Moravičan a ze"
+    },
+    {
+     "page": 21,
+     "title": "SK Loštice 1923, z.s."
+    },
+    {
+     "page": 22,
+     "title": "Prosinec v Žádlovicích 46. ročník „PUTOVÁNÍ ZA LOŠTICKÝM TVARŮŽKEM“"
+    },
+    {
+     "page": 24,
+     "title": "Tříkrálová sbírka 2024"
+    },
+    {
+     "page": 26,
+     "title": "Lodě do celé Evropy - Lugafo aluminium boats"
+    },
+    {
+     "page": 27,
+     "title": "12. ročník šachového turnaje O pohár krále Tvarůžka Větrník"
+    },
+    {
+     "page": 28,
+     "title": "Charitativní ZUMBA neděle po čtvrté"
+    },
+    {
+     "page": 30,
+     "title": "Loštický betlém řezbáře Jaroslava Beneše Odpady, odpady, odpady."
+    },
+    {
+     "page": 31,
+     "title": "Pavlovnie z Vlčic"
+    },
+    {
+     "page": 32,
+     "title": "Lidé a počasí"
+    },
+    {
+     "page": 33,
+     "title": "Velekonoce"
+    }
+   ]
   },
   {
    "id": "3407f264-741",
@@ -108,79 +1026,137 @@
    "url": "https://www.mu-lostice.cz/modules/file_storage/download.php?file=3407f264%7C741&inline=1",
    "a5_url": "pdf_a5/hlas-3407f264-741.pdf",
    "pages_count": 48,
-   "text": "Hlas Loštic - zima 2023\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem 48 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor."
-  },
-  {
-   "id": "ec23801a-724",
-   "title": "Hlas Loštic - podzim 2023",
-   "date": "2023-09-01",
-   "url": "https://www.mu-lostice.cz/modules/file_storage/download.php?file=ec23801a%7C724&inline=1",
-   "a5_url": "pdf_a5/hlas-ec23801a-724.pdf",
-   "pages_count": 36,
-   "text": "Hlas Loštic - podzim 2023\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem 36 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor."
-  },
-  {
-   "id": "21726b74-702",
-   "title": "Hlas Loštic - léto 2023",
-   "date": "2023-06-01",
-   "url": "https://www.mu-lostice.cz/modules/file_storage/download.php?file=21726b74%7C702&inline=1",
-   "a5_url": "pdf_a5/hlas-21726b74-702.pdf",
-   "pages_count": 44,
-   "text": "Hlas Loštic - léto 2023\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem 44 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor."
-  },
-  {
-   "id": "d7de05f4-671",
-   "title": "Hlas Loštic - jaro 2023",
-   "date": "2023-03-01",
-   "url": "https://www.mu-lostice.cz/modules/file_storage/download.php?file=d7de05f4%7C671&inline=1",
-   "a5_url": "pdf_a5/hlas-d7de05f4-671.pdf",
-   "pages_count": 48,
-   "text": "Hlas Loštic - jaro 2023\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem 48 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor."
-  },
-  {
-   "id": "2f166692-634",
-   "title": "Hlas Loštic - zima 2022",
-   "date": "2022-12-01",
-   "url": "https://www.mu-lostice.cz/modules/file_storage/download.php?file=2f166692%7C634&inline=1",
-   "a5_url": "pdf_a5/hlas-2f166692-634.pdf",
-   "pages_count": 52,
-   "text": "Hlas Loštic - zima 2022\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem 52 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor."
-  },
-  {
-   "id": "2369d399-610",
-   "title": "Hlas Loštic - podzim 2022",
-   "date": "2022-09-01",
-   "url": "https://www.mu-lostice.cz/modules/file_storage/download.php?file=2369d399%7C610&inline=1",
-   "a5_url": "pdf_a5/hlas-2369d399-610.pdf",
-   "pages_count": 36,
-   "text": "Hlas Loštic - podzim 2022\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem 36 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor."
-  },
-  {
-   "id": "9d8c7441-596",
-   "title": "Hlas Loštic - léto 2022",
-   "date": "2022-06-01",
-   "url": "https://www.mu-lostice.cz/modules/file_storage/download.php?file=9d8c7441%7C596&inline=1",
-   "a5_url": "pdf_a5/hlas-9d8c7441-596.pdf",
-   "pages_count": 52,
-   "text": "Hlas Loštic - léto 2022\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem 52 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor."
-  },
-  {
-   "id": "ed845069-568",
-   "title": "Hlas Loštic - jaro 2022",
-   "date": "2022-03-01",
-   "url": "https://www.mu-lostice.cz/modules/file_storage/download.php?file=ed845069%7C568&inline=1",
-   "a5_url": "pdf_a5/hlas-ed845069-568.pdf",
-   "pages_count": 40,
-   "text": "Hlas Loštic - jaro 2022\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem 40 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor."
-  },
-  {
-   "id": "6b750dc3-538",
-   "title": "Hlas Loštic - zima 2021",
-   "date": "2021-12-01",
-   "url": "https://www.mu-lostice.cz/modules/file_storage/download.php?file=6b750dc3%7C538&inline=1",
-   "a5_url": "pdf_a5/hlas-6b750dc3-538.pdf",
-   "pages_count": 52,
-   "text": "Hlas Loštic - zima 2021\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem 52 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor."
+   "text": "Hlas Loštic - zima 2023\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v mobilu (celkem 48 stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor.",
+   "toc": [
+    {
+     "page": 3,
+     "title": "Slovo starostky"
+    },
+    {
+     "page": 4,
+     "title": "Vzpomínka Vlasta Seidlová"
+    },
+    {
+     "page": 6,
+     "title": "Bude město v roce 2024 zvyšovat místní poplatek za sběr a likvidaci komunálních odpadů?"
+    },
+    {
+     "page": 7,
+     "title": "Kamenolom Kozí vrch"
+    },
+    {
+     "page": 8,
+     "title": "Dokončení rekonstrukce ulice Moravičanská"
+    },
+    {
+     "page": 9,
+     "title": "Další investice města dokončené v roce 2023"
+    },
+    {
+     "page": 10,
+     "title": "Namátková kontrola nádob na směsný odpad u rodinných domů"
+    },
+    {
+     "page": 12,
+     "title": "„Barvy, tvary, linie“"
+    },
+    {
+     "page": 14,
+     "title": "Linka bezpečí Podzim na základní škole"
+    },
+    {
+     "page": 16,
+     "title": "Mateřská škola"
+    },
+    {
+     "page": 18,
+     "title": "Základní umělecká škola A. Kašpara Loštice"
+    },
+    {
+     "page": 21,
+     "title": "Soutěže k letošnímu 670. výročí"
+    },
+    {
+     "page": 22,
+     "title": "Poděkování za poskytnutou dotaci Informace z Vlčic"
+    },
+    {
+     "page": 23,
+     "title": "Koncerty Kruhu přátel hudby Loštice 2023/2024"
+    },
+    {
+     "page": 24,
+     "title": "Junák – český skaut Loštice"
+    },
+    {
+     "page": 26,
+     "title": "Z činnosti Místní organizace rybářského svazu Loštice"
+    },
+    {
+     "page": 29,
+     "title": "Žádlovická kosa Výbor seniorů v Lošticích"
+    },
+    {
+     "page": 30,
+     "title": "Výstava DOMY A KAMENY ZMIZELÝCH V LOŠTICÍCH Větrník"
+    },
+    {
+     "page": 33,
+     "title": "Co nového v Tvarůžkovém království Loštický betlém po sedmadvacáté"
+    },
+    {
+     "page": 34,
+     "title": "Skupina BG7 - o skupině a Střelnici"
+    },
+    {
+     "page": 35,
+     "title": "Stolní kalendář Pavla A. Taťouna"
+    },
+    {
+     "page": 36,
+     "title": "Koně u Peště SK Loštice 1923, z.s.- vyhodnocení podzimní části SR 2023/24"
+    },
+    {
+     "page": 37,
+     "title": "Stolní tenis v Lošticích"
+    },
+    {
+     "page": 38,
+     "title": "Loštičtí turisté bilancují uplynulý rok"
+    },
+    {
+     "page": 41,
+     "title": "Mohelnicko-loštický Capáček, 4. ročník"
+    },
+    {
+     "page": 42,
+     "title": "Krajský přebor ve volejbale žen"
+    },
+    {
+     "page": 43,
+     "title": "Závěr jezdecké sezóny"
+    },
+    {
+     "page": 44,
+     "title": "Medaile z MČR v dráhové cyklistice putovaly do Loštic"
+    },
+    {
+     "page": 45,
+     "title": "Krásné vánoční svátky"
+    },
+    {
+     "page": 46,
+     "title": "Poctivost ještě nevymřela K zamyšlení"
+    },
+    {
+     "page": 47,
+     "title": "Koláž z fotografií ze soutěže „Kouzelná zákoutí Loštic“ a ze soutěže „Rozkvetlé Loštice 2023“"
+    },
+    {
+     "page": 48,
+     "title": "ZUŠ A. Kašpara Loštice Vám přeje klidné a pohodové vánoční svátky"
+    }
+   ]
   }
  ]
 }

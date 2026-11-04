@@ -119,7 +119,21 @@ function renderDetailContent() {
   }
 
   if (!hasRes) {
-    container.innerHTML = `<div style="white-space:pre-wrap;line-height:1.6">${escapeHtml(it.text || 'Text se nepodařilo získat. Otevřete původní PDF.')}</div>`;
+    if (it.toc && it.toc.length > 0) {
+      let tocHtml = `<div style="margin-bottom:12px;font-weight:700;color:var(--p)">📑 Přehled článků (${it.toc.length}):</div><div style="display:flex;flex-direction:column;gap:8px">`;
+      it.toc.forEach(item => {
+        tocHtml += `
+          <a href="${it.a5_url || it.url}#page=${item.page}" target="_blank" class="res-summary-card" style="text-decoration:none;color:inherit;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-weight:600">${escapeHtml(item.title)}</span>
+            <span class="res-badge ostatni" style="white-space:nowrap;margin-left:8px">str. ${item.page}</span>
+          </a>
+        `;
+      });
+      tocHtml += `</div>`;
+      container.innerHTML = tocHtml;
+    } else {
+      container.innerHTML = `<div style="white-space:pre-wrap;line-height:1.6">${escapeHtml(it.text || 'Text se nepodařilo získat. Otevřete původní PDF.')}</div>`;
+    }
     applyFont();
     return;
   }

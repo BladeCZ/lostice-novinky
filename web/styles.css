@@ -22,6 +22,7 @@ main{max-width:800px;margin:0 auto;padding:12px}
 .row button:active{background:#f0f9ff}
 .row b{min-width:60px;text-align:center;font-size:1rem;color:#0f172a}
 .primary{width:100%;padding:12px;font-size:1rem;font-weight:600;border:0;border-radius:8px;background:var(--p);color:#fff;cursor:pointer;margin:8px 0;box-shadow:0 2px 4px rgba(13,59,102,0.2)}
+.btn-link{display:block;text-align:center;text-decoration:none;box-sizing:border-box}
 .primary:active{background:#0a2c4d}
 .pdf-btn{display:inline-block;margin-top:4px;font-size:0.9rem;color:var(--p);text-decoration:none;font-weight:600}
 .pdf-btn:hover{text-decoration:underline}

@@ -423,6 +423,30 @@ def _usneseni_page(s, cfg, existing, items, seen):
             break
 
 
+def extract_toc_from_a5(a5_path):
+    """Extrahuje nadpisy a cisla stran z vygenerovaneho A5 PDF."""
+    toc = []
+    try:
+        with pdfplumber.open(a5_path) as pdf:
+            for idx, page in enumerate(pdf.pages):
+                words = page.extract_words(extra_attrs=['size', 'fontname'])
+                cw = [w for w in words if w['top'] > 35 and w['bottom'] < page.height - 30]
+                if not cw:
+                    continue
+                max_s = max(w['size'] for w in cw)
+                if max_s >= 10.5:
+                    h_words = [w['text'] for w in cw if w['size'] >= max_s * 0.9]
+                    title = re.sub(r'\s+', ' ', " ".join(h_words)).strip()
+                    if len(title) >= 5 and len(title) <= 120 and not re.match(
+                        r'^(hlas|loštic|podzim|jaro|léto|leto|zima|\d+[\s\.\,\-]*)$', title, re.I
+                    ):
+                        if not toc or toc[-1]['title'] != title:
+                            toc.append({'page': idx + 1, 'title': title})
+    except Exception as e:
+        print("  chyba pri extrakci TOC:", e, file=sys.stderr)
+    return toc
+
+
 def scrape_hlas_lostic(cfg, existing):
     PDF_A5_DIR.mkdir(parents=True, exist_ok=True)
     s = soup_of(cfg["url"])
@@ -450,14 +474,18 @@ def scrape_hlas_lostic(cfg, existing):
         a5_path = PDF_A5_DIR / a5_filename
 
         pages_count = 0
+        toc = old.get("toc", []) if old else []
         if a5_path.exists():
             pages_count = old.get("pages_count", 32) if old else 32
+            if not toc:
+                toc = extract_toc_from_a5(a5_path)
         else:
             print("  hlas lostic (split A5)", id_, title)
             r = get(orig_url)
             if r is not None:
                 a5_bytes, pages_count = split_pdf_to_a5(r.content)
                 a5_path.write_bytes(a5_bytes)
+                toc = extract_toc_from_a5(a5_path)
 
         items.append({
             "id": id_,
@@ -466,7 +494,8 @@ def scrape_hlas_lostic(cfg, existing):
             "url": orig_url,
             "a5_url": f"pdf_a5/{a5_filename}",
             "pages_count": pages_count,
-            "text": f"{title}\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem {pages_count} stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor.",
+            "toc": toc,
+            "text": f"{title}\n\nPřehled článků a témat naleznete v obsahu níže. Časopis je převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem {pages_count} stránek na výšku).",
         })
     return items
 

@@ -25,6 +25,11 @@ data class Resolution(
     val text: String = ""
 )
 
+data class TocItem(
+    val page: Int = 1,
+    val title: String = ""
+)
+
 data class Item(
     val id: String = "",
     val title: String = "",
@@ -35,6 +40,7 @@ data class Item(
     val header: String = "",
     val a5_url: String? = null,
     val pages_count: Int = 0,
+    val toc: List<TocItem> = emptyList(),
     val resolutions: List<Resolution> = emptyList()
 ) {
     /** Datum ve formátu 3. 11. 2026 */
