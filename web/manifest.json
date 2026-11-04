@@ -1,0 +1,10 @@
+{
+  "name": "Loštice novinky",
+  "short_name": "Loštice",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f5f8fb",
+  "theme_color": "#0d3b66",
+  "lang": "cs",
+  "icons": [{"src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}]
+}

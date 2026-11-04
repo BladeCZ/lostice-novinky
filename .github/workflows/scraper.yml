@@ -1,0 +1,71 @@
+name: Aktualizace dat (hlášení, usnesení) a publikace webu
+
+on:
+  schedule:
+    # Každé 2 hodiny
+    - cron: '10 */2 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scraper/**'
+      - 'web/**'
+      - '.github/workflows/scraper.yml'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  scrape-and-publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: scraper/requirements.txt
+
+      - name: Instalace závislostí
+        run: pip install -r scraper/requirements.txt
+
+      - name: Stažení a převod PDF na text
+        run: python scraper/scraper.py
+
+      - name: Kopie dat do webu
+        run: |
+          mkdir -p web/data
+          cp data/*.json web/data/
+
+      - name: Commit a push nových dat
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/ web/data/
+          if git diff --staged --quiet; then
+            echo "Žádné nové změny."
+          else
+            git commit -m "Automatická aktualizace dat [skip ci]"
+            git pull --rebase
+            git push
+          fi
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+
+      - name: Publikace na GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

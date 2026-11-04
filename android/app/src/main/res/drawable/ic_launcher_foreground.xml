@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Reproduktor (městský rozhlas) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,46h12l14,-12v40l-14,-12h-12z" />
+    <path
+        android:fillColor="#00AEEF"
+        android:pathData="M62,42c4,3.5 6,7.5 6,12s-2,8.5 -6,12l-3,-3c3,-2.7 4.5,-5.5 4.5,-9s-1.500,-6.300 -4.500,-9z" />
+    <path
+        android:fillColor="#00AEEF"
+        android:pathData="M69,35c6.500,5 10,11 10,19s-3.500,14 -10,19l-3,-3c5.200,-4 8,-9 8,-16s-2.800,-12 -8,-16z" />
+</vector>

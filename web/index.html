@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0d3b66">
+<title>Loštice novinky</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header><button id="back" hidden aria-label="Zpět">←</button><h1 id="title">Loštice novinky</h1>
+<button id="refresh" aria-label="Obnovit">⟳</button></header>
+
+<main id="list-view"><div id="list"></div></main>
+
+<main id="detail-view" hidden>
+  <div class="panel">
+    <div class="row"><span>Velikost textu</span><button id="font-minus">−</button><b id="font-val"></b><button id="font-plus">+</button></div>
+    <div class="row"><span>Rychlost čtení</span><button id="rate-minus">−</button><b id="rate-val"></b><button id="rate-plus">+</button></div>
+    <button id="speak" class="primary">▶ Přečíst nahlas</button>
+    <a id="pdf" target="_blank" rel="noopener">Otevřít původní PDF</a>
+  </div>
+  <article><div id="d-date"></div><div id="d-text"></div></article>
+</main>
+
+<nav>
+  <button data-tab="hlaseni" class="active">📢<span>Rozhlas</span></button>
+  <button data-tab="rm">🏛️<span>Rada</span></button>
+  <button data-tab="zm">👥<span>Zastupitelstvo</span></button>
+</nav>
+<script src="app.js"></script>
+</body>
+</html>
