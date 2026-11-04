@@ -1,8 +1,8 @@
-name: Aktualizace dat (hlášení, usnesení) a publikace webu
+﻿name: Aktualizace dat (hlĂˇĹˇenĂ­, usnesenĂ­) a publikace webu
 
 on:
   schedule:
-    # Každé 2 hodiny
+    # KaĹľdĂ© 2 hodiny
     - cron: '10 */2 * * *'
   workflow_dispatch:
   push:
@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   scrape-and-publish:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -36,10 +36,10 @@ jobs:
           cache: pip
           cache-dependency-path: scraper/requirements.txt
 
-      - name: Instalace závislostí
+      - name: Instalace zĂˇvislostĂ­
         run: pip install -r scraper/requirements.txt
 
-      - name: Stažení a převod PDF na text
+      - name: StaĹľenĂ­ a pĹ™evod PDF na text
         run: python scraper/scraper.py
 
       - name: Kopie dat do webu
@@ -47,15 +47,15 @@ jobs:
           mkdir -p web/data
           cp data/*.json web/data/
 
-      - name: Commit a push nových dat
+      - name: Commit a push novĂ˝ch dat
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/ web/data/
           if git diff --staged --quiet; then
-            echo "Žádné nové změny."
+            echo "Ĺ˝ĂˇdnĂ© novĂ© zmÄ›ny."
           else
-            git commit -m "Automatická aktualizace dat [skip ci]"
+            git commit -m "AutomatickĂˇ aktualizace dat [skip ci]"
             git pull --rebase
             git push
           fi
