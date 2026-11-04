@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Scraper webu mesta Lostice: hlaseni mestskeho rozhlasu, usneseni RM a ZM.
 
-Stahne PDF dokumenty, vytahne z nich text a ulozi do data/*.json.
-Jiz zpracovane dokumenty se znovu nestahuji (cache podle id).
+Stahne PDF dokumenty, vytahne z nich strukturovany a prehledne cleneny text
+a ulozi do data/*.json. Jiz zpracovane dokumenty se znovu nestahuji (cache podle id).
 """
 import io
 import json
@@ -58,32 +58,106 @@ def clean(s):
     return re.sub(r"\s+", " ", s or "").strip()
 
 
+def format_clean_text(lines_with_pos):
+    """Sestavi z radku s vertikalni polohou citelny text s odstavci a odrazkami."""
+    out_paragraphs = []
+    curr_lines = []
+
+    def flush():
+        nonlocal curr_lines
+        if not curr_lines:
+            return
+        p_text = "\n".join(curr_lines).strip()
+        if p_text:
+            out_paragraphs.append(p_text)
+        curr_lines = []
+
+    prev = None
+    for item in lines_with_pos:
+        txt = item["text"]
+        gap = item["gap"]
+        h = item["h"]
+
+        # 1. Velka vertikalni mezera (nadpis / novy odstavec)
+        is_big_gap = gap >= 6.5 or (h > 0 and gap >= h * 0.55)
+
+        # 2. Zacatek usneseni, cislovaneho bodu nebo uvozujiciho bloku
+        is_heading_or_item = bool(
+            re.match(
+                r"^(Usnesení\s+\d+|[0-9]{1,2}\.\s+|"
+                r"Vážení\s+občané|ČEZ\s+|Klub\s+|Místní\s+organizace|Upozornění|"
+                r"Zápis\s+a\s+usnesení|Přítomni:|Program:|Starostka\s+předložila|"
+                r"Ověřovatelé\s+zápisu)",
+                txt,
+                re.IGNORECASE,
+            )
+        )
+
+        # 3. Zvlastni radky (hlasovani, rozhodnuti)
+        is_vote_or_decision = bool(
+            re.match(
+                r"^(PRO[-:\s]|Poměr hlasování|RM tento program|Po projednání)",
+                txt,
+                re.IGNORECASE,
+            )
+        )
+
+        # 4. Odrazka nebo casovy rozpis ("od 8.00 do...")
+        is_bullet = bool(
+            re.match(r"^(?:[-–•●▪*]|\bod\s+\d{1,2}[\.:]\d{2})", txt, re.IGNORECASE)
+        )
+
+        if prev is not None and (is_big_gap or (is_heading_or_item and gap >= 2.5)):
+            flush()
+
+        if prev is not None and not (is_big_gap or (is_heading_or_item and gap >= 2.5)):
+            prev_txt = curr_lines[-1] if curr_lines else ""
+            if prev_txt.endswith(":") or is_bullet or is_vote_or_decision or txt.startswith("Usnesení "):
+                curr_lines.append(txt)
+            else:
+                if prev_txt.endswith("-"):
+                    curr_lines[-1] = prev_txt[:-1] + txt
+                else:
+                    curr_lines[-1] = prev_txt + " " + txt
+        else:
+            curr_lines.append(txt)
+
+        prev = item
+
+    flush()
+    return "\n\n".join(out_paragraphs)
+
+
 def pdf_to_text(content):
-    """Vytahne text z PDF (bez OCR) a zpracuje ho do odstavcu."""
-    pages = []
+    """Vytahne text z PDF (bez OCR) a zachova mezery i odstavce podle vertikalni pozice radku."""
+    all_lines = []
     with pdfplumber.open(io.BytesIO(content)) as pdf:
-        for page in pdf.pages:
-            t = page.extract_text(x_tolerance=1.5, y_tolerance=3) or ""
-            pages.append(t)
-    text = "\n".join(pages)
-    text = text.replace("\u00ad", "").replace("\xa0", " ")
-    lines = [re.sub(r"[ \t]+", " ", l).strip() for l in text.splitlines()]
-    # Spojeni radku, ktere jsou jen zalomenim vety uvnitr odstavce.
-    out = []
-    for l in lines:
-        if not l:
-            if out and out[-1] != "":
-                out.append("")
-            continue
-        if out and out[-1] != "":
-            prev = out[-1]
-            # Spoj jen zjevne zalomeni vety: dalsi radek zacina malym pismenem
-            # a predchozi nekonci koncem vety.
-            if l[0].islower() and not re.search(r"[\.\!\?:;]$", prev):
-                out[-1] = prev + " " + l
+        for pno, pg in enumerate(pdf.pages):
+            lines = pg.extract_text_lines(x_tolerance=1.5, y_tolerance=3)
+            if not lines:
                 continue
-        out.append(l)
-    return "\n".join(out).strip()
+            prev_l = None
+            for l in lines:
+                txt = re.sub(r"[ \t]+", " ", l["text"]).strip()
+                if not txt:
+                    continue
+                # Odfiltrovat osamocena cisla stranek na hornim / dolnim okraji
+                if re.match(r"^\d{1,3}$", txt) and (l["top"] > pg.height - 60 or l["top"] < 60):
+                    continue
+                gap = (l["top"] - prev_l["bottom"]) if prev_l else (15.0 if pno > 0 else 0.0)
+                h = l["bottom"] - l["top"]
+                all_lines.append(
+                    {
+                        "text": txt,
+                        "gap": gap,
+                        "h": h,
+                        "top": l["top"],
+                        "bottom": l["bottom"],
+                    }
+                )
+                prev_l = l
+
+    return format_clean_text(all_lines)
 
 
 def parse_date(s):
@@ -104,7 +178,7 @@ def download_text(url):
         return None
     try:
         return pdf_to_text(r.content)
-    except Exception as e:  # poskozene/necitelne PDF
+    except Exception as e:
         print(f"  PDF {url} nelze precist: {e}", file=sys.stderr)
         return None
 
@@ -161,7 +235,8 @@ def _hlaseni_items(cfg, existing, entries):
     items = []
     for id_, page, title, date in entries[: cfg["limit"]]:
         old = existing.get(id_)
-        if old and old.get("text"):
+        # Pokud chceme preformatovat nove stavajici data, nacteme PDF znova pokud chybi odstavce
+        if old and old.get("text") and "\n\n" in old.get("text", ""):
             items.append(old)
             continue
         print("  hlaseni", id_, title)
@@ -176,7 +251,7 @@ def _hlaseni_items(cfg, existing, entries):
                 pdf = urljoin(BASE, a["href"].replace("&amp;", "&"))
                 break
         text = download_text(pdf) if pdf else None
-        if not text:  # zaloha: text primo ze stranky
+        if not text:
             body = d.select_one("#content, .content, article, main") or d
             text = clean(body.get_text(" "))[:3000] if not pdf else ""
         if not date:
@@ -208,7 +283,7 @@ def _usneseni_page(s, cfg, existing, items, seen):
         title = clean(a.get_text(" "))
         url = urljoin(BASE, href)
         old = existing.get(id_)
-        if old and old.get("text"):
+        if old and old.get("text") and "\n\n" in old.get("text", ""):
             items.append(old)
             continue
         print("  usneseni", id_, title)
@@ -228,7 +303,6 @@ def main():
         if not items:
             print("  zadne polozky - ponechavam stavajici data", file=sys.stderr)
             continue
-        # Zachovat starsi polozky, ktere uz z webu zmizely
         ids = {i["id"] for i in items}
         items += [o for o in existing.values() if o["id"] not in ids]
         items.sort(key=lambda i: (i.get("date") or "", i["id"]), reverse=True)
@@ -240,4 +314,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
