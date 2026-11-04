@@ -1,4 +1,4 @@
-﻿name: SestavenĂ­ Android aplikace (APK)
+name: Sestavení Android aplikace (APK)
 
 on:
   push:
@@ -21,13 +21,17 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - uses: android-actions/setup-android@v3
+      - name: Android SDK (předinstalován na runneru)
+        run: |
+          SDKM="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKM" --licenses > /dev/null || true
+          "$SDKM" "platforms;android-35" "build-tools;35.0.0" > /dev/null
 
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.10.2'
 
-      - name: SestavenĂ­ APK
+      - name: Sestavení APK
         working-directory: android
         run: |
           gradle assembleRelease --stacktrace
@@ -40,11 +44,11 @@ jobs:
           path: android/dist/LosticeNovinky.apk
           retention-days: 90
 
-      - name: NahrĂˇnĂ­ APK do GitHub Releases
+      - name: Nahrání APK do GitHub Releases
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if ! gh release view apk-latest >/dev/null 2>&1; then
-            gh release create apk-latest --title "Android aplikace LoĹˇtice novinky" --notes "Automaticky sestavenĂˇ aplikace (.apk): hlĂˇĹˇenĂ­ mÄ›stskĂ©ho rozhlasu, usnesenĂ­ rady a zastupitelstva mÄ›sta LoĹˇtice."
+            gh release create apk-latest --title "Android aplikace Loštice novinky" --notes "Automaticky sestavená aplikace (.apk): hlášení městského rozhlasu, usnesení rady a zastupitelstva města Loštice."
           fi
           gh release upload apk-latest android/dist/LosticeNovinky.apk --clobber
