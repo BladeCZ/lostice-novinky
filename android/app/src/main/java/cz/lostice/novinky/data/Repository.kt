@@ -9,11 +9,12 @@ import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
 
-/** Tři kategorie obsahu. [file] je název JSON souboru v repozitáři. */
+/** Čtyři kategorie obsahu. [file] je název JSON souboru v repozitáři. */
 enum class Category(val file: String, val label: String, val shortLabel: String, val notifyTitle: String) {
     HLASENI("hlaseni", "Hlášení městského rozhlasu", "Rozhlas", "Nové hlášení městského rozhlasu"),
     RM("rm", "Usnesení rady města", "Rada", "Nové usnesení rady města"),
-    ZM("zm", "Usnesení zastupitelstva", "Zastupitelstvo", "Nové usnesení zastupitelstva")
+    ZM("zm", "Usnesení zastupitelstva", "Zastupitelstvo", "Nové usnesení zastupitelstva"),
+    HLAS("hlas", "Hlas Loštic (zpravodaj)", "Zpravodaj", "Nové číslo Hlasu Loštic")
 }
 
 data class Resolution(
@@ -32,6 +33,8 @@ data class Item(
     val page: String = "",
     val text: String = "",
     val header: String = "",
+    val a5_url: String? = null,
+    val pages_count: Int = 0,
     val resolutions: List<Resolution> = emptyList()
 ) {
     /** Datum ve formátu 3. 11. 2026 */
@@ -41,6 +44,10 @@ data class Item(
             if (p.size != 3) return date.orEmpty()
             return "${p[2].toInt()}. ${p[1].toInt()}. ${p[0]}"
         }
+
+    /** Plná URL na převedené A5 PDF */
+    val fullA5Url: String?
+        get() = if (!a5_url.isNullOrBlank()) "https://bladecz.github.io/lostice-novinky/$a5_url" else null
 }
 
 data class Feed(

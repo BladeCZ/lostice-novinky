@@ -1,4 +1,9 @@
-const LABELS = {hlaseni: 'Hlášení městského rozhlasu', rm: 'Usnesení rady města', zm: 'Usnesení zastupitelstva'};
+const LABELS = {
+  hlaseni: 'Hlášení městského rozhlasu',
+  rm: 'Usnesení rady města',
+  zm: 'Usnesení zastupitelstva',
+  hlas: 'Hlas Loštic (zpravodaj)'
+};
 const $ = id => document.getElementById(id);
 const store = {
   get: (k, d) => { const v = localStorage.getItem(k); return v === null ? d : parseFloat(v); },
@@ -9,6 +14,9 @@ let fontScale = store.get('fontScale', 1), rate = store.get('speechRate', 1);
 let chunks = [], idx = 0, speaking = false;
 let detailTab = 'summary'; // 'summary' nebo 'full'
 let searchQuery = '';
+
+// Uchování pozice scrollování v přehledu
+let summaryScrollPos = 0;
 
 const fmtDate = d => { if (!d) return ''; const [y, m, dd] = d.split('-'); return `${+dd}. ${+m}. ${y}`; };
 const r1 = v => Math.round(v * 10) / 10;
@@ -28,7 +36,12 @@ function renderList() {
   f.items.forEach(it => {
     const c = document.createElement('div'); c.className = 'card';
     const prev = it.text.replace(/\s+/g, ' ').slice(0, 160);
-    const countBadge = it.resolutions && it.resolutions.length ? `<span style="float:right;font-size:0.8rem;color:var(--p);font-weight:600">${it.resolutions.length} bodů</span>` : '';
+    let countBadge = '';
+    if (it.resolutions && it.resolutions.length) {
+      countBadge = `<span style="float:right;font-size:0.8rem;color:var(--p);font-weight:600">${it.resolutions.length} bodů</span>`;
+    } else if (tab === 'hlas' && it.pages_count) {
+      countBadge = `<span style="float:right;font-size:0.8rem;color:var(--p);font-weight:600">${it.pages_count} stran A5</span>`;
+    }
     c.innerHTML = `<div class="d">${fmtDate(it.date)}${countBadge}</div><div class="t"></div><div class="p"></div>`;
     c.children[1].textContent = it.title;
     c.children[2].textContent = prev;
@@ -66,6 +79,26 @@ function escapeRegex(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+function scrollToResolution(idx) {
+  // Zapamatovat si aktuální scroll pozici v přehledu
+  summaryScrollPos = window.scrollY;
+  
+  // Přepnout na Celé znění
+  detailTab = 'full';
+  $('tab-full').classList.add('active');
+  $('tab-summary').classList.remove('active');
+  renderDetailContent();
+
+  setTimeout(() => {
+    const target = document.getElementById(`res-block-${idx}`);
+    if (target) {
+      target.scrollIntoView({behavior: 'smooth', block: 'center'});
+      target.classList.add('highlight');
+      setTimeout(() => target.classList.remove('highlight'), 1500);
+    }
+  }, 50);
+}
+
 function renderDetailContent() {
   const it = current;
   if (!it) return;
@@ -77,6 +110,14 @@ function renderDetailContent() {
   $('search-box').hidden = !hasRes;
   $('jump-bar').hidden = !hasRes || detailTab !== 'full';
 
+  // Hlas Loštic ovládání
+  const isHlas = Boolean(it.a5_url);
+  $('controls-reading').hidden = isHlas;
+  $('controls-hlas').hidden = !isHlas;
+  if (isHlas) {
+    $('btn-a5').href = it.a5_url;
+  }
+
   if (!hasRes) {
     container.innerHTML = `<div style="white-space:pre-wrap;line-height:1.6">${escapeHtml(it.text || 'Text se nepodařilo získat. Otevřete původní PDF.')}</div>`;
     applyFont();
@@ -86,20 +127,26 @@ function renderDetailContent() {
   const q = searchQuery.trim().toLowerCase();
 
   if (detailTab === 'summary') {
-    const list = it.resolutions.filter(r => !r.is_procedural && (!q || r.num.toLowerCase().includes(q) || r.summary.toLowerCase().includes(q) || r.text.toLowerCase().includes(q)));
+    const list = it.resolutions.map((r, idx) => ({res: r, origIdx: idx}))
+      .filter(x => !x.res.is_procedural && (!q || x.res.num.toLowerCase().includes(q) || x.res.summary.toLowerCase().includes(q) || x.res.text.toLowerCase().includes(q)));
+    
     if (list.length === 0) {
       container.innerHTML = '<div class="msg">Žádné usnesení neodpovídá hledání.</div>';
     } else {
-      list.forEach(res => {
+      list.forEach(({res, origIdx}) => {
         const card = document.createElement('div');
         card.className = 'res-summary-card';
+        card.style.cursor = 'pointer';
+        card.title = 'Klepnutím zobrazíte celé znění tohoto usnesení';
         card.innerHTML = `
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
             <b style="color:var(--p)">Usnesení ${highlight(res.num, q)}</b>
             <span class="res-badge ${getBadgeClass(res.decision)}">${escapeHtml(res.decision)}</span>
           </div>
           <div>${highlight(res.summary, q)}</div>
+          <div style="text-align:right;font-size:0.8rem;color:var(--s);font-weight:700;margin-top:4px">Zobrazit celé znění →</div>
         `;
+        card.onclick = () => scrollToResolution(origIdx);
         container.appendChild(card);
       });
     }
@@ -159,6 +206,7 @@ function openItem(it) {
   current = it; history.pushState({d: 1}, '');
   detailTab = (it.resolutions && it.resolutions.length > 0) ? 'summary' : 'full';
   searchQuery = '';
+  summaryScrollPos = 0;
   $('search-input').value = '';
   $('list-view').hidden = true; $('detail-view').hidden = false; $('back').hidden = false;
   $('title').textContent = it.title;
@@ -183,6 +231,8 @@ $('tab-summary').onclick = () => {
   $('tab-summary').classList.add('active');
   $('tab-full').classList.remove('active');
   renderDetailContent();
+  // Návrat na původní pozici scrollování v přehledu
+  window.scrollTo({top: summaryScrollPos, behavior: 'instant'});
 };
 
 $('tab-full').onclick = () => {
@@ -250,5 +300,10 @@ document.querySelectorAll('nav button').forEach(b => b.onclick = async () => {
   if (!feeds[tab]) { await load(tab); renderList(); }
 });
 
-(async () => { renderList(); await load(tab); renderList(); Object.keys(LABELS).filter(k => k !== tab).forEach(k => load(k)); })();
+(async () => {
+  renderList();
+  await load(tab);
+  renderList();
+  Object.keys(LABELS).filter(k => k !== tab).forEach(k => load(k));
+})();
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');

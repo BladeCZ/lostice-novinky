@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Scraper webu mesta Lostice: hlaseni mestskeho rozhlasu, usneseni RM a ZM.
+"""Scraper webu mesta Lostice: hlaseni mestskeho rozhlasu, usneseni RM a ZM, Hlas Lostic.
 
-Stahne PDF dokumenty, vytahne z nich strukturovany a prehledne cleneny text
-a rozparsuje usneseni na jednotliva cisla se shrnutim (ulozi do data/*.json).
+Stahne PDF dokumenty, vytahne z nich strukturovany text a rozparsuje usneseni
+na jednotliva cisla se shrnutim. Hlas Lostic navic rozdeli na jednotlive stranky A5 na vysku.
 """
+import copy
 import io
 import json
 import re
@@ -14,12 +15,15 @@ from pathlib import Path
 from urllib.parse import urljoin, urlparse, parse_qs
 
 import pdfplumber
+import pypdf
 import requests
 from bs4 import BeautifulSoup
 
 BASE = "https://www.mu-lostice.cz"
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; LosticeNovinky/1.0; +https://github.com/BladeCZ/lostice-novinky)"}
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+WEB_DIR = Path(__file__).resolve().parent.parent / "web"
+PDF_A5_DIR = WEB_DIR / "pdf_a5"
 
 SOURCES = {
     "hlaseni": {
@@ -28,6 +32,7 @@ SOURCES = {
     },
     "rm": {"url": BASE + "/mesto/samosprava/usneseni-rm/", "limit": 100},
     "zm": {"url": BASE + "/mesto/samosprava/usneseni-zm/", "limit": 60},
+    "hlas": {"url": BASE + "/obcan/hlas-lostic/", "limit": 20},
 }
 
 session = requests.Session()
@@ -249,6 +254,34 @@ def parse_resolutions(text):
     return header, resolutions
 
 
+def split_pdf_to_a5(content):
+    """Rozdeli PDF dvojstranky na vysku (A5)."""
+    reader = pypdf.PdfReader(io.BytesIO(content))
+    writer = pypdf.PdfWriter()
+    for page in reader.pages:
+        w = float(page.mediabox.width)
+        h = float(page.mediabox.height)
+        if w > h * 1.1:
+            hw = w / 2.0
+            lp = copy.copy(page)
+            lp.mediabox = copy.copy(page.mediabox)
+            lp.mediabox.lower_left = (0, 0)
+            lp.mediabox.upper_right = (hw, h)
+            writer.add_page(lp)
+
+            rp = copy.copy(page)
+            rp.mediabox = copy.copy(page.mediabox)
+            rp.mediabox.lower_left = (hw, 0)
+            rp.mediabox.upper_right = (w, h)
+            writer.add_page(rp)
+        else:
+            writer.add_page(page)
+
+    buf = io.BytesIO()
+    writer.write(buf)
+    return buf.getvalue(), len(writer.pages)
+
+
 def parse_date(s):
     """Vrati ISO datum z textu typu '3. 11. 2026' nebo '19.10.2026'."""
     m = re.search(r"(\d{1,2})\s*\.\s*(\d{1,2})\s*\.\s*(\d{4})", s or "")
@@ -390,13 +423,68 @@ def _usneseni_page(s, cfg, existing, items, seen):
             break
 
 
+def scrape_hlas_lostic(cfg, existing):
+    PDF_A5_DIR.mkdir(parents=True, exist_ok=True)
+    s = soup_of(cfg["url"])
+    if s is None:
+        return None
+    items = []
+    links = [a for a in s.find_all("a", href=True) if "download.php" in a["href"]]
+    for a in links[: cfg["limit"]]:
+        title = clean(a.get_text(" "))
+        href = a["href"].replace("&amp;", "&")
+        q = parse_qs(urlparse(href).query)
+        id_ = q.get("file", [href])[0].replace("|", "-")
+        orig_url = urljoin(BASE, href)
+
+        m = re.search(r"(jaro|léto|leto|podzim|zima)\s+(\d{4})", title, re.IGNORECASE)
+        date_str = ""
+        if m:
+            season = m.group(1).lower()
+            year = m.group(2)
+            month_map = {"jaro": "03", "léto": "06", "leto": "06", "podzim": "09", "zima": "12"}
+            date_str = f"{year}-{month_map.get(season, '01')}-01"
+
+        old = existing.get(id_)
+        a5_filename = f"hlas-{id_}.pdf"
+        a5_path = PDF_A5_DIR / a5_filename
+
+        pages_count = 0
+        if a5_path.exists():
+            pages_count = old.get("pages_count", 32) if old else 32
+        else:
+            print("  hlas lostic (split A5)", id_, title)
+            r = get(orig_url)
+            if r is not None:
+                a5_bytes, pages_count = split_pdf_to_a5(r.content)
+                a5_path.write_bytes(a5_bytes)
+
+        items.append({
+            "id": id_,
+            "title": title,
+            "date": date_str,
+            "url": orig_url,
+            "a5_url": f"pdf_a5/{a5_filename}",
+            "pages_count": pages_count,
+            "text": f"{title}\n\nČasopis byl automaticky převeden z původních dvojstran do formátu A5 na výšku pro pohodlné čtení v telefonu (celkem {pages_count} stránek na výšku).\n\nKliknutím na tlačítko níže otevřete převedené A5 PDF na výšku nebo původní soubor.",
+        })
+    return items
+
+
 def main():
     DATA_DIR.mkdir(exist_ok=True)
+    WEB_DIR.mkdir(exist_ok=True)
     now = datetime.now(timezone.utc).isoformat(timespec="seconds")
     for kind, cfg in SOURCES.items():
         print("==", kind)
         existing = load_existing(kind)
-        items = scrape_hlaseni(cfg, existing) if kind == "hlaseni" else scrape_usneseni(cfg, existing)
+        if kind == "hlaseni":
+            items = scrape_hlaseni(cfg, existing)
+        elif kind == "hlas":
+            items = scrape_hlas_lostic(cfg, existing)
+        else:
+            items = scrape_usneseni(cfg, existing)
+
         if not items:
             print("  zadne polozky - ponechavam stavajici data", file=sys.stderr)
             continue
@@ -406,6 +494,7 @@ def main():
         items = items[: cfg["limit"]]
         out = {"updated": now, "source": cfg["url"], "items": items}
         (DATA_DIR / f"{kind}.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), "utf-8")
+        (WEB_DIR / "data" / f"{kind}.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), "utf-8")
         print(f"  ulozeno {len(items)} polozek")
 
 

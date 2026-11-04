@@ -34,9 +34,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Groups
+import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
@@ -44,12 +46,13 @@ import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -112,9 +115,10 @@ private val Category.icon: ImageVector
         Category.HLASENI -> Icons.Filled.Campaign
         Category.RM -> Icons.Filled.AccountBalance
         Category.ZM -> Icons.Filled.Groups
+        Category.HLAS -> Icons.Filled.MenuBook
     }
 
-private const val SETTINGS_TAB = 3
+private const val SETTINGS_TAB = 4
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -195,7 +199,7 @@ fun App(vm: MainViewModel, startTab: Int) {
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                         )
                     }
-                    ItemList(vm.feeds[c]?.items, vm.loading) { item ->
+                    ItemList(vm.feeds[c]?.items, c, vm.loading) { item ->
                         openCat = c.ordinal
                         openId = item.id
                     }
@@ -206,7 +210,7 @@ fun App(vm: MainViewModel, startTab: Int) {
 }
 
 @Composable
-private fun ItemList(items: List<Item>?, loading: Boolean, onClick: (Item) -> Unit) {
+private fun ItemList(items: List<Item>?, category: Category, loading: Boolean, onClick: (Item) -> Unit) {
     if (items == null || items.isEmpty()) {
         Text(
             if (loading || items == null) "Načítání…" else "Žádné záznamy.",
@@ -241,6 +245,13 @@ private fun ItemList(items: List<Item>?, loading: Boolean, onClick: (Item) -> Un
                                 color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.SemiBold
                             )
+                        } else if (category == Category.HLAS && item.pages_count > 0) {
+                            Text(
+                                "${item.pages_count} stran A5",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.SemiBold
+                            )
                         }
                     }
                     Text(item.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
@@ -270,6 +281,14 @@ private fun DetailScreen(item: Item, prefs: Prefs, onBack: () -> Unit) {
     val hasResolutions = item.resolutions.isNotEmpty()
     var detailTab by rememberSaveable { mutableIntStateOf(if (hasResolutions) 0 else 1) }
 
+    // Pro skok z přehledu do celého znění na konkrétní index usnesení
+    var targetScrollIndex by remember { mutableIntStateOf(-1) }
+
+    // Nezávislé stavy scrollování pro obě záložky
+    val summaryListState = rememberLazyListState()
+    val fullListState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
+
     DisposableEffect(Unit) { onDispose { reader.shutdown() } }
 
     Scaffold(
@@ -284,8 +303,9 @@ private fun DetailScreen(item: Item, prefs: Prefs, onBack: () -> Unit) {
                 },
                 actions = {
                     IconButton(onClick = {
-                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.url)))
-                    }) { Icon(Icons.Filled.OpenInBrowser, contentDescription = "Otevřít původní PDF") }
+                        val viewUrl = item.fullA5Url ?: item.url
+                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(viewUrl)))
+                    }) { Icon(Icons.Filled.OpenInBrowser, contentDescription = "Otevřít PDF") }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -297,62 +317,109 @@ private fun DetailScreen(item: Item, prefs: Prefs, onBack: () -> Unit) {
         }
     ) { pad ->
         Column(Modifier.padding(pad).fillMaxSize()) {
-            // Ovládací lišta pro předčítání a velikost textu
-            Card(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-            ) {
-                Column(Modifier.padding(horizontal = 12.dp, vertical = 4.dp)) {
-                    Stepper(
-                        label = "Velikost textu",
-                        value = "${(fontScale * 100).roundToInt()} %",
-                        onMinus = {
-                            fontScale = round1(fontScale - Prefs.STEP_FONT).coerceAtLeast(Prefs.MIN_FONT)
-                            prefs.fontScale = fontScale
-                        },
-                        onPlus = {
-                            fontScale = round1(fontScale + Prefs.STEP_FONT).coerceAtMost(Prefs.MAX_FONT)
-                            prefs.fontScale = fontScale
+            // Speciální panel pro Hlas Loštic (A5 formát na výšku)
+            if (!item.a5_url.isNullOrBlank()) {
+                Card(
+                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                ) {
+                    Column(Modifier.padding(14.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Filled.AutoStories, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                "Časopis A5 na výšku (${item.pages_count} stran)",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
                         }
-                    )
-                    Stepper(
-                        label = "Rychlost čtení",
-                        value = "${(rate * 10).roundToInt() / 10.0}×",
-                        onMinus = {
-                            rate = round1(rate - Prefs.STEP_RATE).coerceAtLeast(Prefs.MIN_RATE)
-                            prefs.speechRate = rate
-                            reader.setRate(rate)
-                        },
-                        onPlus = {
-                            rate = round1(rate + Prefs.STEP_RATE).coerceAtMost(Prefs.MAX_RATE)
-                            prefs.speechRate = rate
-                            reader.setRate(rate)
-                        }
-                    )
-                    Button(
-                        onClick = {
-                            if (reader.playing) {
-                                reader.stop()
-                            } else {
-                                val speakText = if (hasResolutions && detailTab == 0) {
-                                    val sb = StringBuilder("${item.title}.\nStručný přehled schválených usnesení:\n")
-                                    item.resolutions.filter { !it.is_procedural }.forEach {
-                                        sb.append("Usnesení ${it.num}: ${it.summary}\n")
+                        Text(
+                            "Původní dvojstránky na šířku byly rozděleny na jednotlivé A5 stránky na výšku pro pohodlné čtení v telefonu.",
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(vertical = 6.dp)
+                        )
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Button(
+                                onClick = {
+                                    item.fullA5Url?.let { url ->
+                                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
                                     }
-                                    sb.toString()
-                                } else {
-                                    "${item.title}.\n${item.text}"
-                                }
-                                reader.play(speakText, rate)
+                                },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text("Číst A5 na výšku")
                             }
-                        },
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
-                    ) {
-                        Icon(if (reader.playing) Icons.Filled.Stop else Icons.Filled.PlayArrow, contentDescription = null)
-                        Text(if (reader.playing) "  Zastavit čtení" else "  Přečíst nahlas")
+                            Button(
+                                onClick = {
+                                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.url)))
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surface, contentColor = MaterialTheme.colorScheme.primary),
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text("Původní PDF")
+                            }
+                        }
                     }
-                    reader.error?.let {
-                        Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                }
+            } else {
+                // Ovládací lišta pro předčítání a velikost textu (Hlášení a Usnesení)
+                Card(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                ) {
+                    Column(Modifier.padding(horizontal = 12.dp, vertical = 4.dp)) {
+                        Stepper(
+                            label = "Velikost textu",
+                            value = "${(fontScale * 100).roundToInt()} %",
+                            onMinus = {
+                                fontScale = round1(fontScale - Prefs.STEP_FONT).coerceAtLeast(Prefs.MIN_FONT)
+                                prefs.fontScale = fontScale
+                            },
+                            onPlus = {
+                                fontScale = round1(fontScale + Prefs.STEP_FONT).coerceAtMost(Prefs.MAX_FONT)
+                                prefs.fontScale = fontScale
+                            }
+                        )
+                        Stepper(
+                            label = "Rychlost čtení",
+                            value = "${(rate * 10).roundToInt() / 10.0}×",
+                            onMinus = {
+                                rate = round1(rate - Prefs.STEP_RATE).coerceAtLeast(Prefs.MIN_RATE)
+                                prefs.speechRate = rate
+                                reader.setRate(rate)
+                            },
+                            onPlus = {
+                                rate = round1(rate + Prefs.STEP_RATE).coerceAtMost(Prefs.MAX_RATE)
+                                prefs.speechRate = rate
+                                reader.setRate(rate)
+                            }
+                        )
+                        Button(
+                            onClick = {
+                                if (reader.playing) {
+                                    reader.stop()
+                                } else {
+                                    val speakText = if (hasResolutions && detailTab == 0) {
+                                        val sb = StringBuilder("${item.title}.\nStručný přehled schválených usnesení:\n")
+                                        item.resolutions.filter { !it.is_procedural }.forEach {
+                                            sb.append("Usnesení ${it.num}: ${it.summary}\n")
+                                        }
+                                        sb.toString()
+                                    } else {
+                                        "${item.title}.\n${item.text}"
+                                    }
+                                    reader.play(speakText, rate)
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                        ) {
+                            Icon(if (reader.playing) Icons.Filled.Stop else Icons.Filled.PlayArrow, contentDescription = null)
+                            Text(if (reader.playing) "  Zastavit čtení" else "  Přečíst nahlas")
+                        }
+                        reader.error?.let {
+                            Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                        }
                     }
                 }
             }
@@ -366,7 +433,7 @@ private fun DetailScreen(item: Item, prefs: Prefs, onBack: () -> Unit) {
                     Tab(
                         selected = detailTab == 0,
                         onClick = { detailTab = 0 },
-                        text = { Text("📌 Přehled usnesení (${item.resolutions.count { !it.is_procedural }})") }
+                        text = { Text("📌 Přehled (${item.resolutions.count { !it.is_procedural }})") }
                     )
                     Tab(
                         selected = detailTab == 1,
@@ -376,13 +443,27 @@ private fun DetailScreen(item: Item, prefs: Prefs, onBack: () -> Unit) {
                 }
             }
 
-            // Obsah podle záložky
+            // Obsah podle vybrané záložky
             if (hasResolutions && detailTab == 0) {
-                SummaryTab(item.resolutions, fontScale)
+                SummaryTab(
+                    resolutions = item.resolutions,
+                    fontScale = fontScale,
+                    listState = summaryListState,
+                    onItemClick = { origIndex ->
+                        targetScrollIndex = origIndex
+                        detailTab = 1 // přepnout na Celé znění
+                    }
+                )
             } else if (hasResolutions) {
-                StructuredFullTextTab(item, fontScale)
+                StructuredFullTextTab(
+                    item = item,
+                    fontScale = fontScale,
+                    listState = fullListState,
+                    targetScrollIndex = targetScrollIndex,
+                    onTargetScrolled = { targetScrollIndex = -1 }
+                )
             } else {
-                // Běžný text pro hlášení rozhlasu
+                // Běžný text pro hlášení rozhlasu / Hlas Loštic
                 SelectionContainer {
                     Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp)) {
                         if (item.displayDate.isNotEmpty()) {
@@ -406,12 +487,17 @@ private fun DetailScreen(item: Item, prefs: Prefs, onBack: () -> Unit) {
 
 /** Záložka se stručným přehledem podstatných usnesení */
 @Composable
-private fun SummaryTab(resolutions: List<Resolution>, fontScale: Float) {
+private fun SummaryTab(
+    resolutions: List<Resolution>,
+    fontScale: Float,
+    listState: androidx.compose.foundation.lazy.LazyListState,
+    onItemClick: (Int) -> Unit
+) {
     var query by rememberSaveable { mutableStateOf("") }
     var hideProcedural by rememberSaveable { mutableStateOf(true) }
 
-    val filtered = remember(resolutions, query, hideProcedural) {
-        resolutions.filter { res ->
+    val filteredWithIndex = remember(resolutions, query, hideProcedural) {
+        resolutions.mapIndexed { idx, res -> idx to res }.filter { (_, res) ->
             (!hideProcedural || !res.is_procedural) &&
                     (query.isBlank() || res.num.contains(query, ignoreCase = true) || res.summary.contains(query, ignoreCase = true) || res.text.contains(query, ignoreCase = true))
         }
@@ -427,22 +513,25 @@ private fun SummaryTab(resolutions: List<Resolution>, fontScale: Float) {
             FilterChip(
                 selected = hideProcedural,
                 onClick = { hideProcedural = !hideProcedural },
-                label = { Text("Skrýt formální body (komise, program)") }
+                label = { Text("Skrýt formální body") }
             )
         }
 
-        if (filtered.isEmpty()) {
+        if (filteredWithIndex.isEmpty()) {
             Box(Modifier.fillMaxSize().padding(32.dp), contentAlignment = Alignment.Center) {
                 Text("Žádné usnesení neodpovídá hledání.", color = Color.Gray)
             }
         } else {
             LazyColumn(
+                state = listState,
                 contentPadding = PaddingValues(12.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(filtered, key = { it.num }) { res ->
+                items(filteredWithIndex, key = { it.second.num }) { (origIdx, res) ->
                     Card(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onItemClick(origIdx) },
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                         elevation = CardDefaults.cardElevation(1.dp)
                     ) {
@@ -466,6 +555,17 @@ private fun SummaryTab(resolutions: List<Resolution>, fontScale: Float) {
                                 lineHeight = (16 * fontScale * 1.45f).sp,
                                 modifier = Modifier.padding(top = 6.dp)
                             )
+                            Row(
+                                Modifier.fillMaxWidth().padding(top = 6.dp),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                Text(
+                                    "Zobrazit celý text →",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
                         }
                     }
                 }
@@ -476,10 +576,24 @@ private fun SummaryTab(resolutions: List<Resolution>, fontScale: Float) {
 
 /** Záložka Celé znění s vyhledáváním a rychlým scrollováním mezi body */
 @Composable
-private fun StructuredFullTextTab(item: Item, fontScale: Float) {
+private fun StructuredFullTextTab(
+    item: Item,
+    fontScale: Float,
+    listState: androidx.compose.foundation.lazy.LazyListState,
+    targetScrollIndex: Int,
+    onTargetScrolled: () -> Unit
+) {
     var query by rememberSaveable { mutableStateOf("") }
-    val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
+
+    // Automatický scroll při přechodu z přehledu
+    LaunchedEffect(targetScrollIndex) {
+        if (targetScrollIndex >= 0) {
+            val offset = if (item.header.isNotBlank()) 1 else 0
+            listState.animateScrollToItem(targetScrollIndex + offset)
+            onTargetScrolled()
+        }
+    }
 
     val filteredIndices = remember(item.resolutions, query) {
         if (query.isBlank()) item.resolutions.indices.toList()
@@ -504,7 +618,6 @@ private fun StructuredFullTextTab(item: Item, fontScale: Float) {
                     SuggestionChip(
                         onClick = {
                             scope.launch {
-                                // +1 kvůli záhlaví na indexu 0
                                 listState.animateScrollToItem(idx + if (item.header.isNotBlank()) 1 else 0)
                             }
                         },
