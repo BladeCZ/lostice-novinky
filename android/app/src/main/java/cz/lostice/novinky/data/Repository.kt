@@ -9,8 +9,9 @@ import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
 
-/** Čtyři kategorie obsahu. [file] je název JSON souboru v repozitáři. */
+/** Pět kategorií obsahu. [file] je název JSON souboru v repozitáři. */
 enum class Category(val file: String, val label: String, val shortLabel: String, val notifyTitle: String) {
+    AKTUALITY("aktuality", "Aktuality", "Aktuality", "Nová aktualita"),
     HLASENI("hlaseni", "Hlášení městského rozhlasu", "Rozhlas", "Nové hlášení městského rozhlasu"),
     RM("rm", "Usnesení rady města", "Rada", "Nové usnesení rady města"),
     ZM("zm", "Usnesení zastupitelstva", "Zastupitelstvo", "Nové usnesení zastupitelstva"),
@@ -30,10 +31,17 @@ data class TocItem(
     val title: String = ""
 )
 
+data class Attachment(
+    val name: String = "",
+    val url: String = ""
+)
+
 data class Item(
     val id: String = "",
     val title: String = "",
     val date: String? = null,
+    val date_insert: String? = null,
+    val date_update: String? = null,
     val url: String = "",
     val page: String = "",
     val text: String = "",
@@ -41,7 +49,9 @@ data class Item(
     val a5_url: String? = null,
     val pages_count: Int = 0,
     val toc: List<TocItem> = emptyList(),
-    val resolutions: List<Resolution> = emptyList()
+    val resolutions: List<Resolution> = emptyList(),
+    val images: List<String> = emptyList(),
+    val files: List<Attachment> = emptyList()
 ) {
     /** Datum ve formátu 3. 11. 2026 */
     val displayDate: String

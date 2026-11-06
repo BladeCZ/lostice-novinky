@@ -1,9 +1,11 @@
-﻿name: Aktualizace dat (hlĂˇĹˇenĂ­, usnesenĂ­) a publikace webu
+name: Aktualizace dat a publikace webu
 
 on:
   schedule:
-    # KaĹľdĂ© 2 hodiny
-    - cron: '10 */2 * * *'
+    # Každou hodinu během dne (5:15 - 20:15 UTC, tj. 6:15 - 21:15 SEČ)
+    - cron: '15 5-20 * * *'
+    # V noci každé 3 hodiny
+    - cron: '15 0,3 * * *'
   workflow_dispatch:
   push:
     branches: [main]
@@ -36,36 +38,52 @@ jobs:
           cache: pip
           cache-dependency-path: scraper/requirements.txt
 
-      - name: Instalace zĂˇvislostĂ­
+      - name: Rychlá kontrola změn na webu
+        id: check
+        run: |
+          python scraper/check_changes.py "$GITHUB_OUTPUT"
+          # Při ručním spuštění nebo pushi vynutit plné scrapování
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Instalace závislostí
+        if: steps.check.outputs.has_changes == 'true'
         run: pip install -r scraper/requirements.txt
 
-      - name: StaĹľenĂ­ a pĹ™evod PDF na text
+      - name: Stažení a zpracování dat
+        if: steps.check.outputs.has_changes == 'true'
         run: python scraper/scraper.py
 
       - name: Kopie dat do webu
+        if: steps.check.outputs.has_changes == 'true'
         run: |
           mkdir -p web/data
           cp data/*.json web/data/
 
-      - name: Commit a push novĂ˝ch dat
+      - name: Commit a push nových dat
+        if: steps.check.outputs.has_changes == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/ web/data/
           if git diff --staged --quiet; then
-            echo "Ĺ˝ĂˇdnĂ© novĂ© zmÄ›ny."
+            echo "Žádné nové změny."
           else
-            git commit -m "AutomatickĂˇ aktualizace dat [skip ci]"
+            git commit -m "Automatická aktualizace dat [skip ci]"
             git pull --rebase
             git push
           fi
 
       - uses: actions/configure-pages@v5
+        if: steps.check.outputs.has_changes == 'true'
 
       - uses: actions/upload-pages-artifact@v3
+        if: steps.check.outputs.has_changes == 'true'
         with:
           path: web
 
       - name: Publikace na GitHub Pages
+        if: steps.check.outputs.has_changes == 'true'
         id: deployment
         uses: actions/deploy-pages@v4

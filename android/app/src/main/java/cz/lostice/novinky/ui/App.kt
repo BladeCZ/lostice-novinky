@@ -40,6 +40,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Check
@@ -49,6 +50,7 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.Newspaper
 import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.PictureAsPdf
@@ -108,6 +110,7 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -116,7 +119,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import cz.lostice.novinky.MainViewModel
+import cz.lostice.novinky.data.Attachment
 import cz.lostice.novinky.data.Category
 import cz.lostice.novinky.data.Item
 import cz.lostice.novinky.data.Prefs
@@ -212,13 +217,14 @@ private fun buildColorScheme(prefs: Prefs): ColorScheme {
 
 private val Category.icon: ImageVector
     get() = when (this) {
+        Category.AKTUALITY -> Icons.Filled.Newspaper
         Category.HLASENI -> Icons.Filled.Campaign
         Category.RM -> Icons.Filled.AccountBalance
         Category.ZM -> Icons.Filled.Groups
         Category.HLAS -> Icons.Filled.MenuBook
     }
 
-private const val SETTINGS_TAB = 4
+private val SETTINGS_TAB get() = Category.values().size
 
 data class PdfTarget(val url: String, val title: String, val page: Int = 1)
 
@@ -385,6 +391,20 @@ private fun ItemList(items: List<Item>?, category: Category, loading: Boolean, o
                                 "${item.pages_count} stran A5",
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        } else if (item.images.isNotEmpty()) {
+                            Text(
+                                "📷 ${item.images.size}",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        } else if (item.files.isNotEmpty()) {
+                            Text(
+                                "📎 ${item.files.size}",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.secondary,
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
@@ -565,7 +585,7 @@ private fun DetailScreen(
                         )
                     }
                 } else {
-                    // Běžný text pro hlášení rozhlasu
+                    // Běžný text pro hlášení rozhlasu a aktuality
                     SelectionContainer {
                         Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp)) {
                             if (item.displayDate.isNotEmpty()) {
@@ -574,12 +594,94 @@ private fun DetailScreen(
                                     color = MaterialTheme.colorScheme.secondary, fontSize = (15 * fontScale).sp
                                 )
                             }
+
+                            // Fotogalerie z původního zdroje (pro aktuality)
+                            if (item.images.isNotEmpty()) {
+                                Spacer(Modifier.height(8.dp))
+                                LazyRow(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                                ) {
+                                    items(item.images) { imgUrl ->
+                                        Card(
+                                            shape = RoundedCornerShape(10.dp),
+                                            elevation = CardDefaults.cardElevation(2.dp),
+                                            modifier = Modifier
+                                                .height(200.dp)
+                                                .width(280.dp)
+                                                .clickable {
+                                                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(imgUrl)))
+                                                }
+                                        ) {
+                                            AsyncImage(
+                                                model = imgUrl,
+                                                contentDescription = null,
+                                                contentScale = ContentScale.Crop,
+                                                modifier = Modifier.fillMaxSize()
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+
                             Text(
-                                item.text.ifBlank { "Text se nepodařilo z dokumentu získat. Otevřete původní PDF." },
+                                item.text.ifBlank { "Text se nepodařilo z dokumentu získat. Otevřete původní odkaz." },
                                 fontSize = (17 * fontScale).sp,
                                 lineHeight = (17 * fontScale * 1.55f).sp,
-                                modifier = Modifier.padding(top = 6.dp)
+                                modifier = Modifier.padding(top = 8.dp)
                             )
+
+                            // Přílohy a soubory ke stažení
+                            if (item.files.isNotEmpty()) {
+                                Spacer(Modifier.height(16.dp))
+                                Card(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
+                                ) {
+                                    Column(Modifier.padding(12.dp)) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Icon(Icons.Filled.AttachFile, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                                            Spacer(Modifier.width(6.dp))
+                                            Text(
+                                                "Přílohy a soubory (${item.files.size}):",
+                                                fontWeight = FontWeight.Bold,
+                                                style = MaterialTheme.typography.titleSmall,
+                                                color = MaterialTheme.colorScheme.primary
+                                            )
+                                        }
+                                        Spacer(Modifier.height(8.dp))
+                                        item.files.forEach { file ->
+                                            val isPdf = file.url.contains(".pdf", ignoreCase = true) ||
+                                                    file.name.contains(".pdf", ignoreCase = true) ||
+                                                    file.url.contains("evt_file.php")
+                                            Button(
+                                                onClick = {
+                                                    if (isPdf) onOpenPdf(file.url, file.name, 1)
+                                                    else context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(file.url)))
+                                                },
+                                                colors = ButtonDefaults.buttonColors(
+                                                    containerColor = MaterialTheme.colorScheme.surface,
+                                                    contentColor = MaterialTheme.colorScheme.primary
+                                                ),
+                                                modifier = Modifier.fillMaxWidth().padding(vertical = 3.dp)
+                                            ) {
+                                                Icon(
+                                                    if (isPdf) Icons.Filled.PictureAsPdf else Icons.Filled.AttachFile,
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(18.dp)
+                                                )
+                                                Spacer(Modifier.width(8.dp))
+                                                Text(
+                                                    file.name,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                    modifier = Modifier.weight(1f)
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

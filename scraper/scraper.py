@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Scraper webu mesta Lostice: hlaseni mestskeho rozhlasu, usneseni RM a ZM, Hlas Lostic.
+"""Scraper webu mesta Lostice: aktuality, hlaseni rozhlasu, usneseni RM a ZM, Hlas Lostic.
 
 Stahne PDF dokumenty, vytahne z nich strukturovany text a rozparsuje usneseni
 na jednotliva cisla se shrnutim. Hlas Lostic navic rozdeli na jednotlive stranky A5 na vysku.
+Aktuality a hlaseni navic obohacuje o datum a cas vlozeni a posledni aktualizace.
 """
 import copy
 import io
@@ -26,6 +27,7 @@ WEB_DIR = Path(__file__).resolve().parent.parent / "web"
 PDF_A5_DIR = WEB_DIR / "pdf_a5"
 
 SOURCES = {
+    "aktuality": {"url": BASE + "/obcan/aktualne/aktuality/", "limit": 40},
     "hlaseni": {
         "url": BASE + "/obcan/aktualne/aktualni-hlaseni-mestskeho-rozhlasu/",
         "limit": 150,
@@ -149,10 +151,11 @@ def pdf_to_text(content):
                 all_lines.append(
                     {
                         "text": txt,
-                        "gap": gap,
-                        "h": h,
                         "top": l["top"],
                         "bottom": l["bottom"],
+                        "gap": gap,
+                        "h": h,
+                        "page": pno,
                     }
                 )
                 prev_l = l
@@ -160,120 +163,30 @@ def pdf_to_text(content):
     return format_clean_text(all_lines)
 
 
-def parse_resolutions(text):
-    """Rozdeli text usneseni RM/ZM na strukturovane body vcetne shrnuti."""
-    pattern = re.compile(
-        r"(?=(?:^|\n)\s*Usnesení\s+\d+[\/\d\w\.-]+(?:\s*ze dne\s*[\d\.]+)?\s*:)",
-        re.IGNORECASE,
-    )
-    parts = pattern.split(text)
-
-    procedural = [
-        "program",
-        "zapisovatel",
-        "zapisovatelem",
-        "návrhové komise",
-        "návrhovou komisi",
-        "ověřovatel",
-        "ověřovateli",
-        "zápis z",
-        "zápisu z",
-    ]
-
-    header = ""
-    resolutions = []
-
-    for p in parts:
-        p_clean = p.strip()
-        if not p_clean:
-            continue
-        m = re.match(
-            r"^\s*Usnesení\s+(\d+[\/\d\w\.-]+(?:\s*ze dne\s*[\d\.]+)?)\s*:\s*(.*)",
-            p_clean,
-            re.DOTALL | re.IGNORECASE,
-        )
-        if not m:
-            if not header:
-                header = p_clean
-            continue
-
-        num_str = m.group(1).strip()
-        full_body = m.group(2).strip()
-
-        decision = "ROZHODNUTÍ"
-        for d in [
-            "neschvaluje",
-            "schvaluje",
-            "bere na vědomí",
-            "ukládá",
-            "pověřuje",
-            "revokuje",
-            "souhlasí",
-            "doporučuje",
-            "volí",
-            "jmenuje",
-            "děkuje",
-        ]:
-            if re.search(r"\b" + d + r"\b", full_body, re.IGNORECASE):
-                decision = d.upper()
-                break
-
-        is_proc = any(kw in full_body.lower()[:120] for kw in procedural)
-
-        body_pure = re.split(
-            r"\n+\s*\d+\.\s+(?:RM|ZM|Rada|Zastupitelstvo)\s+", full_body
-        )[0]
-        body_pure = re.sub(r"\s+PRO[-:\s].*$", "", body_pure, flags=re.IGNORECASE).strip()
-        body_clean = re.sub(r"\s+", " ", body_pure)
-
-        txt = body_clean
-        txt = re.sub(r"(\d+)\.\s+([a-záčďéěíňóřšťúůýž])", r"\1___DOT___ \2", txt)
-        txt = re.sub(r"(\d+)\.\s*(\d+)\.\s*(\d{4})", r"\1___DOT___ \2___DOT___ \3", txt)
-        txt = re.sub(
-            r"\b(Ing|Mgr|Bc|MUDr|MVDr|JUDr|PhDr|RNDr|doc|prof|č\.p|č\.o|č\.ev|odst|parc|par|p\.č|zn|k\.ú|tj|tzn|např|popř|mj|sv|vč|ul|č|s\.r\.o|a\.s|spol\.s\.r\.o|spol)\.\s*",
-            r"\1___DOT___ ",
-            txt,
-            flags=re.I,
-        )
-        txt = re.sub(r"(?<!\w)([A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ])\.\s*", r"\1___DOT___ ", txt)
-
-        parts_sent = re.split(r"\.(?:\s+(?=[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ])|$)", txt)
-        first_sent = parts_sent[0].replace("___DOT___", ".").strip()
-        if not first_sent.endswith("."):
-            first_sent += "."
-
-        resolutions.append(
-            {
-                "num": num_str,
-                "decision": decision,
-                "is_procedural": is_proc,
-                "summary": first_sent,
-                "text": full_body,
-            }
-        )
-    return header, resolutions
-
-
 def split_pdf_to_a5(content):
-    """Rozdeli PDF dvojstranky na vysku (A5)."""
-    reader = pypdf.PdfReader(io.BytesIO(content))
+    """Rozdeli PDF kde jsou dvojstranky A4 na sirku na jednotlive stranky A5 na vysku."""
+    src = pypdf.PdfReader(io.BytesIO(content))
     writer = pypdf.PdfWriter()
-    for page in reader.pages:
-        w = float(page.mediabox.width)
-        h = float(page.mediabox.height)
-        if w > h * 1.1:
-            hw = w / 2.0
-            lp = copy.copy(page)
-            lp.mediabox = copy.copy(page.mediabox)
-            lp.mediabox.lower_left = (0, 0)
-            lp.mediabox.upper_right = (hw, h)
-            writer.add_page(lp)
 
-            rp = copy.copy(page)
-            rp.mediabox = copy.copy(page.mediabox)
-            rp.mediabox.lower_left = (hw, 0)
-            rp.mediabox.upper_right = (w, h)
-            writer.add_page(rp)
+    for idx, page in enumerate(src.pages):
+        box = page.mediabox
+        w = float(box.width)
+        h = float(box.height)
+
+        if w > h * 1.15:
+            mid = w / 2.0
+            p_left = copy.copy(page)
+            p_left.mediabox = copy.copy(box)
+            p_left.mediabox.lower_left = (box.left, box.bottom)
+            p_left.mediabox.upper_right = (mid, box.top)
+
+            p_right = copy.copy(page)
+            p_right.mediabox = copy.copy(box)
+            p_right.mediabox.lower_left = (mid, box.bottom)
+            p_right.mediabox.upper_right = (box.right, box.top)
+
+            writer.add_page(p_left)
+            writer.add_page(p_right)
         else:
             writer.add_page(page)
 
@@ -282,27 +195,86 @@ def split_pdf_to_a5(content):
     return buf.getvalue(), len(writer.pages)
 
 
-def parse_date(s):
-    """Vrati ISO datum z textu typu '3. 11. 2026' nebo '19.10.2026'."""
-    m = re.search(r"(\d{1,2})\s*\.\s*(\d{1,2})\s*\.\s*(\d{4})", s or "")
-    if not m:
-        return None
-    d, mo, y = map(int, m.groups())
-    try:
-        return datetime(y, mo, d).strftime("%Y-%m-%d")
-    except ValueError:
-        return None
-
-
-def download_text(url):
-    r = get(url)
+def download_text(pdf_url):
+    r = get(pdf_url)
     if r is None:
-        return None
+        return ""
     try:
-        return pdf_to_text(r.content)
+        t = pdf_to_text(r.content)
+        if t and len(t.strip()) > 30:
+            return t
     except Exception as e:
-        print(f"  PDF {url} nelze precist: {e}", file=sys.stderr)
-        return None
+        print(f"  chyba cteni PDF {pdf_url}: {e}", file=sys.stderr)
+    return ""
+
+
+def parse_date(txt):
+    m = re.search(r"(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})", txt or "")
+    if m:
+        d, mth, y = m.groups()
+        return f"{y}-{int(mth):02d}-{int(d):02d}"
+    return None
+
+
+def parse_resolutions(text):
+    """Rozparsuje text usneseni na cisla, rozhodnuti a shrnuti."""
+    m_first = re.search(r"(?:^|\n)(?:Usnesení\s+č\.\s*|Usnesení\s+)(\d+/\d+)", text)
+    if not m_first:
+        return "", []
+
+    header = text[: m_first.start()].strip()
+    body = text[m_first.start() :]
+
+    pattern = r"(?:^|\n)(?:Usnesení\s+č\.\s*|Usnesení\s+)(\d+/\d+)(.*?)(?=(?:\n(?:Usnesení\s+č\.\s*|Usnesení\s+)\d+/\d+)|\Z)"
+    matches = re.findall(pattern, body, re.DOTALL)
+
+    resolutions = []
+    for num, block in matches:
+        b = block.strip()
+
+        m_dec = re.search(r"\b(SCHVALUJE|NESCHVALUJE|BERE NA VĚDOMÍ|SOUHLASÍ|VOLÍ|JMENUJE|UKLÁDÁ|POVĚŘUJE)\b", b)
+        decision = m_dec.group(1) if m_dec else "OSTATNÍ"
+
+        is_proc = bool(
+            re.search(
+                r"(ověřovatel|program jednání|zapisovatel|návrhová komise|volební komise|zasedání.*řídí|schválení programu)",
+                b,
+                re.IGNORECASE,
+            )
+        )
+
+        clean_block = b
+        if m_dec:
+            clean_block = b[m_dec.end() :].strip()
+            clean_block = re.sub(r"^[:\-\s]+", "", clean_block).strip()
+
+        first_sentence = clean_block
+        dot_idx = -1
+        m_dot = re.search(r"(?<!\bp)(?<!\bč)(?<!\br)(?<!\bul)(?<!\bč\.j)(?<!\bč\.p)(?<!\s\d)\.\s+[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]", clean_block)
+        if m_dot:
+            dot_idx = m_dot.start() + 1
+        elif "." in clean_block:
+            dot_idx = clean_block.find(".") + 1
+
+        if dot_idx > 0:
+            first_sentence = clean_block[:dot_idx].strip()
+
+        first_sentence = re.sub(r"\s+", " ", first_sentence)
+        if len(first_sentence) > 260:
+            first_sentence = first_sentence[:257].rsplit(" ", 1)[0] + "…"
+
+        summary = f"{decision.capitalize()} {first_sentence}" if decision != "OSTATNÍ" else first_sentence
+        summary = re.sub(r"\s+", " ", summary).strip()
+
+        resolutions.append({
+            "num": num,
+            "decision": decision,
+            "is_procedural": is_proc,
+            "summary": summary,
+            "text": b
+        })
+
+    return header, resolutions
 
 
 def load_existing(kind):
@@ -315,38 +287,160 @@ def load_existing(kind):
     return {}
 
 
-MAX_PAGES = 15
-
-
-def pages(url):
-    for n in range(1, MAX_PAGES + 1):
-        s = soup_of(url if n == 1 else f"{url}?page={n}")
+def pages(base_url, max_pages=8):
+    for p in range(1, max_pages + 1):
+        url = base_url if p == 1 else f"{base_url.rstrip('/')}/?page={p}"
+        s = soup_of(url)
         if s is None:
-            return
+            break
         yield s
+        if not s.find("a", href=re.compile(rf"page={p + 1}")):
+            break
+
+
+def scrape_aktuality(cfg, existing):
+    """Scrapuje aktuality vcetne textu, obrazku a priloh."""
+    items = []
+    seen = set()
+    for s in pages(cfg["url"]):
+        links = []
+        for a in s.find_all("a", href=True):
+            h = a["href"].replace("&amp;", "&")
+            if "/aktuality/" in h and h.endswith(".html") and h not in seen:
+                seen.add(h)
+                links.append(h)
+
+        for h in links:
+            if len(items) >= cfg["limit"]:
+                break
+            art_url = urljoin(BASE, h)
+            m = re.search(r"-([0-9]+)cs\.html$", h)
+            id_ = m.group(1) if m else h.split("/")[-1].replace(".html", "")
+
+            old = existing.get(id_)
+            if old and old.get("text") and old.get("date_insert"):
+                items.append(old)
+                continue
+
+            print("  aktualita", id_, h)
+            d = soup_of(art_url)
+            if d is None:
+                if old:
+                    items.append(old)
+                continue
+
+            h1 = d.find("h1")
+            title = clean(h1.get_text()) if h1 else clean(h.split("/")[-1])
+
+            ins = d.find(class_="date-insert-value")
+            upd = d.find(class_="date-update-value")
+            d_ins = clean(ins.get_text()) if ins else ""
+            d_upd = clean(upd.get_text()) if upd else ""
+
+            date_iso = ""
+            dm = re.search(r"(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})", d_ins or d_upd)
+            if dm:
+                date_iso = f"{dm.group(3)}-{int(dm.group(2)):02d}-{int(dm.group(1)):02d}"
+
+            c = d.find("div", class_="event-detail-content") or d.find("div", class_="event-detail")
+            lead = ""
+            body_text = ""
+            if c:
+                lead_tag = c.find("div", class_="lead")
+                if lead_tag:
+                    lead = clean(lead_tag.get_text())
+                txt_tag = c.find("div", class_="event-text")
+                if txt_tag:
+                    paragraphs = []
+                    for p_el in txt_tag.find_all(["p", "div", "li"]):
+                        ptxt = clean(p_el.get_text())
+                        if ptxt and ptxt not in paragraphs and len(ptxt) > 1:
+                            paragraphs.append(ptxt)
+                    body_text = "\n\n".join(paragraphs) if paragraphs else clean(txt_tag.get_text())
+            else:
+                body_tag = d.select_one("#content, .content, article, main")
+                body_text = clean(body_tag.get_text())[:3000] if body_tag else ""
+
+            full_text_parts = []
+            if lead:
+                full_text_parts.append(lead)
+            if body_text:
+                full_text_parts.append(body_text)
+
+            footer = []
+            if d_ins:
+                footer.append(f"Datum vložení: {d_ins}")
+            if d_upd:
+                footer.append(f"Datum poslední aktualizace: {d_upd}")
+            if footer:
+                full_text_parts.append("\n".join(footer))
+
+            full_text = "\n\n".join(full_text_parts)
+
+            # Obrázky (galerie a inline)
+            images = []
+            seen_imgs = set()
+            if c:
+                for tag in c.find_all(["img", "a"]):
+                    src = tag.get("href") or tag.get("src")
+                    if not src:
+                        continue
+                    if "evt_image.php" in src or src.lower().endswith((".jpg", ".jpeg", ".png", ".webp")):
+                        full_img = urljoin(BASE, src)
+                        base_img = re.sub(r"&(width|height|box)=\d+", "", full_img)
+                        if base_img not in seen_imgs and "logo" not in base_img.lower() and "crest" not in base_img.lower():
+                            seen_imgs.add(base_img)
+                            images.append(base_img)
+
+            # Přílohy a soubory
+            files = []
+            if c:
+                files_div = c.find("div", class_="event-files")
+                if files_div:
+                    for fa in files_div.find_all("a", href=True):
+                        fname = clean(fa.get_text()) or "Příloha"
+                        furl = urljoin(BASE, fa["href"].replace("&amp;", "&"))
+                        files.append({"name": fname, "url": furl})
+
+            items.append({
+                "id": id_,
+                "title": title,
+                "date": date_iso,
+                "date_insert": d_ins,
+                "date_update": d_upd,
+                "url": art_url,
+                "page": art_url,
+                "text": full_text,
+                "images": images,
+                "files": files,
+            })
+
+        if len(items) >= cfg["limit"]:
+            break
+
+    return items
 
 
 def scrape_hlaseni(cfg, existing):
-    seen, entries = set(), []
+    entries = []
+    seen = set()
     for s in pages(cfg["url"]):
-        before = len(entries)
-        entries += _hlaseni_entries(s, seen)
-        if len(entries) == before or len(entries) >= cfg["limit"]:
+        n_before = len(seen)
+        entries += _hlaseni_page(s, seen)
+        if len(seen) == n_before or len(entries) >= cfg["limit"]:
             break
-    if not entries:
-        return None
     return _hlaseni_items(cfg, existing, entries)
 
 
-def _hlaseni_entries(s, seen):
+def _hlaseni_page(s, seen):
     entries = []
     for a in s.find_all("a", href=True):
-        href = a["href"]
-        m = re.search(r"/aktualni-hlaseni-mestskeho-rozhlasu/.+?-(\d+)cs\.html$", href)
-        if not m or m.group(1) in seen:
+        href = a["href"].replace("&amp;", "&")
+        m = re.search(r"-([0-9]+)cs\.html$", href)
+        if not m or m.group(1) in seen or "/aktualni-hlaseni-mestskeho-rozhlasu/" not in href:
             continue
         seen.add(m.group(1))
-        txt = clean(a.get_text(" "))
+        txt = a.get_text(" ")
         title = clean(txt.split("Datum:")[0])
         entries.append((m.group(1), urljoin(BASE, href), title, parse_date(txt.split("Datum:")[-1])))
     return entries
@@ -356,27 +450,60 @@ def _hlaseni_items(cfg, existing, entries):
     items = []
     for id_, page, title, date in entries[: cfg["limit"]]:
         old = existing.get(id_)
-        if old and old.get("text") and "\n\n" in old.get("text", ""):
+        # Pokud starý záznam existuje a již obsahuje datum vložení
+        if old and old.get("text") and "Datum vložení:" in old.get("text", "") and old.get("date_insert"):
             items.append(old)
             continue
+
         print("  hlaseni", id_, title)
         d = soup_of(page)
         if d is None:
             if old:
                 items.append(old)
             continue
+
+        ins = d.find(class_="date-insert-value")
+        upd = d.find(class_="date-update-value")
+        d_ins = clean(ins.get_text()) if ins else ""
+        d_upd = clean(upd.get_text()) if upd else ""
+
+        footer = []
+        if d_ins:
+            footer.append(f"Datum vložení: {d_ins}")
+        if d_upd:
+            footer.append(f"Datum poslední aktualizace: {d_upd}")
+        footer_str = "\n".join(footer)
+
         pdf = None
         for a in d.find_all("a", href=True):
             if "evt_file.php" in a["href"] or a["href"].lower().endswith(".pdf"):
                 pdf = urljoin(BASE, a["href"].replace("&amp;", "&"))
                 break
+
         text = download_text(pdf) if pdf else None
         if not text:
-            body = d.select_one("#content, .content, article, main") or d
-            text = clean(body.get_text(" "))[:3000] if not pdf else ""
+            if old and old.get("text"):
+                text = old["text"].split("\n\nDatum vložení:")[0]
+            else:
+                body = d.select_one("#content, .content, article, main") or d
+                text = clean(body.get_text(" "))[:3000] if not pdf else ""
+
         if not date:
             date = parse_date(title) or parse_date(d.get_text(" "))
-        items.append({"id": id_, "title": title, "date": date, "url": pdf or page, "page": page, "text": text or ""})
+
+        if footer_str and "Datum vložení:" not in (text or ""):
+            text = ((text or "").rstrip() + "\n\n" + footer_str).strip()
+
+        items.append({
+            "id": id_,
+            "title": title,
+            "date": date,
+            "date_insert": d_ins,
+            "date_update": d_upd,
+            "url": pdf or page,
+            "page": page,
+            "text": text or "",
+        })
     return items
 
 
@@ -417,7 +544,7 @@ def _usneseni_page(s, cfg, existing, items, seen):
             "page": cfg["url"],
             "text": text,
             "header": header,
-            "resolutions": resolutions
+            "resolutions": resolutions,
         })
         if len(items) >= cfg["limit"]:
             break
@@ -507,7 +634,9 @@ def main():
     for kind, cfg in SOURCES.items():
         print("==", kind)
         existing = load_existing(kind)
-        if kind == "hlaseni":
+        if kind == "aktuality":
+            items = scrape_aktuality(cfg, existing)
+        elif kind == "hlaseni":
             items = scrape_hlaseni(cfg, existing)
         elif kind == "hlas":
             items = scrape_hlas_lostic(cfg, existing)

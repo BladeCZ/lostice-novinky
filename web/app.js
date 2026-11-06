@@ -1,4 +1,5 @@
 const LABELS = {
+  aktuality: 'Aktuality',
   hlaseni: 'Hlášení městského rozhlasu',
   rm: 'Usnesení rady města',
   zm: 'Usnesení zastupitelstva',
@@ -9,7 +10,7 @@ const store = {
   get: (k, d) => { const v = localStorage.getItem(k); return v === null ? d : parseFloat(v); },
   set: (k, v) => localStorage.setItem(k, v)
 };
-let tab = 'hlaseni', feeds = {}, current = null;
+let tab = 'aktuality', feeds = {}, current = null;
 let fontScale = store.get('fontScale', 1), rate = store.get('speechRate', 1);
 let chunks = [], idx = 0, speaking = false;
 let detailTab = 'summary'; // 'summary' nebo 'full'
@@ -41,6 +42,10 @@ function renderList() {
       countBadge = `<span style="float:right;font-size:0.8rem;color:var(--p);font-weight:600">${it.resolutions.length} bodů</span>`;
     } else if (tab === 'hlas' && it.pages_count) {
       countBadge = `<span style="float:right;font-size:0.8rem;color:var(--p);font-weight:600">${it.pages_count} stran A5</span>`;
+    } else if (it.images && it.images.length) {
+      countBadge = `<span style="float:right;font-size:0.8rem;color:var(--p);font-weight:600">📷 ${it.images.length}</span>`;
+    } else if (it.files && it.files.length) {
+      countBadge = `<span style="float:right;font-size:0.8rem;color:var(--p);font-weight:600">📎 ${it.files.length}</span>`;
     }
     c.innerHTML = `<div class="d">${fmtDate(it.date)}${countBadge}</div><div class="t"></div><div class="p"></div>`;
     c.children[1].textContent = it.title;
@@ -119,21 +124,48 @@ function renderDetailContent() {
   }
 
   if (!hasRes) {
+    let html = '';
+    
+    // Obrázky
+    if (it.images && it.images.length > 0) {
+      html += '<div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:12px;margin-bottom:12px">';
+      it.images.forEach(img => {
+        html += `<a href="${img}" target="_blank" rel="noopener"><img src="${img}" style="max-height:220px;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.15);object-fit:cover" loading="lazy"></a>`;
+      });
+      html += '</div>';
+    }
+
     if (it.toc && it.toc.length > 0) {
-      let tocHtml = `<div style="margin-bottom:12px;font-weight:700;color:var(--p)">📑 Přehled článků (${it.toc.length}):</div><div style="display:flex;flex-direction:column;gap:8px">`;
+      html += `<div style="margin-bottom:12px;font-weight:700;color:var(--p)">📑 Přehled článků (${it.toc.length}):</div><div style="display:flex;flex-direction:column;gap:8px">`;
       it.toc.forEach(item => {
-        tocHtml += `
+        html += `
           <a href="${it.a5_url || it.url}#page=${item.page}" target="_blank" class="res-summary-card" style="text-decoration:none;color:inherit;display:flex;align-items:center;justify-content:space-between">
             <span style="font-weight:600">${escapeHtml(item.title)}</span>
             <span class="res-badge ostatni" style="white-space:nowrap;margin-left:8px">str. ${item.page}</span>
           </a>
         `;
       });
-      tocHtml += `</div>`;
-      container.innerHTML = tocHtml;
+      html += `</div>`;
     } else {
-      container.innerHTML = `<div style="white-space:pre-wrap;line-height:1.6">${escapeHtml(it.text || 'Text se nepodařilo získat. Otevřete původní PDF.')}</div>`;
+      html += `<div style="white-space:pre-wrap;line-height:1.6">${escapeHtml(it.text || 'Text se nepodařilo získat. Otevřete původní odkaz.')}</div>`;
     }
+
+    // Přílohy a soubory
+    if (it.files && it.files.length > 0) {
+      html += '<div style="margin-top:16px;padding:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px">';
+      html += `<div style="font-weight:700;margin-bottom:8px;color:var(--p)">📎 Přílohy a soubory (${it.files.length}):</div>`;
+      it.files.forEach(f => {
+        html += `
+          <a href="${f.url}" target="_blank" rel="noopener" class="res-summary-card" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:inherit;margin-bottom:6px">
+            <span style="font-weight:600">${escapeHtml(f.name)}</span>
+            <span style="color:var(--s);font-size:0.85rem;font-weight:bold">Otevřít ↗</span>
+          </a>
+        `;
+      });
+      html += '</div>';
+    }
+
+    container.innerHTML = html;
     applyFont();
     return;
   }
@@ -226,6 +258,7 @@ function openItem(it) {
   $('title').textContent = it.title;
   $('d-date').textContent = fmtDate(it.date);
   $('pdf').href = it.url;
+  $('pdf').textContent = (tab === 'aktuality') ? 'Původní odkaz' : 'Původní PDF';
   
   $('tab-summary').classList.toggle('active', detailTab === 'summary');
   $('tab-full').classList.toggle('active', detailTab === 'full');
