@@ -1,7 +1,26 @@
 {
- "updated": "2026-11-09T13:53:15+00:00",
+ "updated": "2026-11-10T13:27:50+00:00",
  "source": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/",
  "items": [
+  {
+   "id": "3470",
+   "title": "Ustavující zasedání Zastupitelstva města Loštice dne 09.11.2026",
+   "date": "2026-11-10",
+   "date_insert": "10. 11. 2026 12:15",
+   "date_update": "10. 11. 2026 12:18",
+   "url": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/ustavujici-zasedani-zastupitelstva-mesta-lostice-dne-09112026-3470cs.html",
+   "page": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/ustavujici-zasedani-zastupitelstva-mesta-lostice-dne-09112026-3470cs.html",
+   "text": "V pondělí 9. listopadu 2026 se v Městském kulturním středisku v Lošticích konalo ustavující zasedání zastupitelstva města. Nově zvolení zastupitelé složili slib a zvolili starostku, místostarostu a další členy rady města.\n\nStarostkou města byla počtvrté za sebou zvolena Bc. Šárka Havelková Seifertová. Také místostarosta Jan Konečný bude svou funkci vykonávat čtvrté volební období. Starostka bude svou funkci vykonávat jako uvolněná, místostarosta jako neuvolněný.\n\nPětičlennou radu města tvoří starostka a místostarosta spolu s dalšími třemi zvolenými členy rady, kterými jsou: Ing. Dušan Desnica, Mgr. Pavel Kuba a Mgr. Blanka Zdráhalová.\n\nSložení Zastupitelstva města Loštice\n\nIng. Dušan Desnica\n\nMgr. Lubomír Faltus\n\nRostislav Faltýnek\n\nIng. Zdeněk Fischer\n\nBc. Šárka Havelková Seifertová\n\nVlastislav Heidenreich\n\nIng. David Kofránek\n\nJan Konečný\n\nMgr. Pavel Kuba\n\nMgr. Kateřina Malíčková\n\nBc. Milan Novák\n\nJaroslav Sládek\n\nMichal Trlica\n\nStanislav Veselý\n\nMgr. Blanka Zdráhalová\n\nSložení výborů\n\nZastupitelstvo zřídilo finanční a kontrolní výbor a osadní výbory v Žádlovicích a ve Vlčicích.\n\nVýbor\n\nPředseda\n\nČlenové\n\nFinanční výbor\n\nIng. David Kofránek a Jaroslav Sládek\n\nKontrolní výbor\n\nBc. Milan Novák a Stanislav Veselý\n\nOsadní výbor v Žádlovicích\n\nMgr. Kateřina Bergová, Martin Odstrčil a Stanislav Hekele ml.\n\nOsadní výbor ve Vlčicích\n\nPavel Taťoun\n\nEmílie Kozičková, Ludvík Šimša a Zdeněk Paták\n\nDatum vložení: 10. 11. 2026 12:15\nDatum poslední aktualizace: 10. 11. 2026 12:18",
+   "images": [
+    "https://www.mu-lostice.cz/evt_image.php?img=9333&v=1794309457"
+   ],
+   "files": [
+    {
+     "name": "Ustavující zasedání ZM dne 9. 11. 2026",
+     "url": "https://www.mu-lostice.cz/evt_file.php?file=9334"
+    }
+   ]
+  },
   {
    "id": "3459",
    "title": "Návrh rekonstrukce ulice Na Trávníku - zveřejnění výkresu k veřejnému projednání",
@@ -702,28 +721,6 @@
     "https://www.mu-lostice.cz/evt_image.php?img=8256&v=1763622977"
    ],
    "files": []
-  },
-  {
-   "id": "2970",
-   "title": "Olomoucký kraj spustil novou webovou stránku www.panprokoukl.cz",
-   "date": "2025-10-10",
-   "date_insert": "10. 10. 2025 11:25",
-   "date_update": "10. 10. 2025 11:37",
-   "url": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/olomoucky-kraj-spustil-novou-webovou-stranku-wwwpanprokouklcz-2970cs.html",
-   "page": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/olomoucky-kraj-spustil-novou-webovou-stranku-wwwpanprokouklcz-2970cs.html",
-   "text": "Olomoucký kraj ve spolupráci s Krajským ředitelstvím policie Olomouckého kraje a E-bezpečím oficiálně spustil novou webovou stránku www.panprokoukl.cz, která za využití umělé inteligence pomáhá v osvětě před tzv. kyberšmejdy.\n\nDatum vložení: 10. 10. 2025 11:25\nDatum poslední aktualizace: 10. 10. 2025 11:37",
-   "images": [
-    "https://www.mu-lostice.cz/evt_image.php?img=8178&v=1760088653",
-    "https://www.mu-lostice.cz/evt_image.php?img=8174&v=1760088451",
-    "https://www.mu-lostice.cz/evt_image.php?img=8176&v=1760088492",
-    "https://www.mu-lostice.cz/evt_image.php?img=8177&v=1760088505"
-   ],
-   "files": [
-    {
-     "name": "Tisková zpráva",
-     "url": "https://www.mu-lostice.cz/evt_file.php?file=8179"
-    }
-   ]
   }
  ]
 }
