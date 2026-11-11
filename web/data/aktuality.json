@@ -1,7 +1,21 @@
 {
- "updated": "2026-11-10T13:27:50+00:00",
+ "updated": "2026-11-11T20:11:51+00:00",
  "source": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/",
  "items": [
+  {
+   "id": "3474",
+   "title": "Oznámení - MěÚ Loštice bude ve dnech 16.11. a 18. 11. 2026 UZAVŘEN",
+   "date": "2026-11-11",
+   "date_insert": "11. 11. 2026 13:39",
+   "date_update": "11. 11. 2026 13:48",
+   "url": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/oznameni-meu-lostice-bude-ve-dnech-1611-a-18-11-2026-uzavren-3474cs.html",
+   "page": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/oznameni-meu-lostice-bude-ve-dnech-1611-a-18-11-2026-uzavren-3474cs.html",
+   "text": "Oznamujeme občanům, že ve dnech 16. 11. 2026 a 18. 11. 2026 bude Městský úřad Loštice z provozních důvodů pro veřejnost uzavřen. Děkujeme za pochopení.\n\nDatum vložení: 11. 11. 2026 13:39\nDatum poslední aktualizace: 11. 11. 2026 13:48",
+   "images": [
+    "https://www.mu-lostice.cz/evt_image.php?img=9339&v=1794401279"
+   ],
+   "files": []
+  },
   {
    "id": "3470",
    "title": "Ustavující zasedání Zastupitelstva města Loštice dne 09.11.2026",
@@ -707,20 +721,6 @@
      "url": "https://www.mu-lostice.cz/evt_file.php?file=8266"
     }
    ]
-  },
-  {
-   "id": "3011",
-   "title": "Informace o stěhování Policie České republiky – Obvodního oddělení Mohelnice",
-   "date": "2025-11-20",
-   "date_insert": "20. 11. 2025 8:13",
-   "date_update": "20. 11. 2025 8:16",
-   "url": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/informace-o-stehovani-policie-ceske-republiky-obvodniho-oddeleni-mohelnice-3011cs.html",
-   "page": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/informace-o-stehovani-policie-ceske-republiky-obvodniho-oddeleni-mohelnice-3011cs.html",
-   "text": "Dovolujeme si Vás informovat, že od 12. listopadu 2025 je, z důvodu dlouhodobé rekonstrukce současné budovy, přestěhováno Obvodní oddělení Policie České republiky Mohelnice na dočasné pracoviště s adresou Olomoucká 389/82, 789 85 Mohelnice (budova bývalé Obchodní akademie).\n\nTelefonní čísla a e-mailové kontakty zůstávají beze změny. Vedoucí Obvodního oddělení Mohelnice děkuje za pochopení a těší se na případnou návštěvu v nových prostorách.\n\nhttps://policie.gov.cz/clanek/obvodni-oddeleni-mohelnice-926125.aspx\n\nDatum vložení: 20. 11. 2025 8:13\nDatum poslední aktualizace: 20. 11. 2025 8:16",
-   "images": [
-    "https://www.mu-lostice.cz/evt_image.php?img=8256&v=1763622977"
-   ],
-   "files": []
   }
  ]
 }
