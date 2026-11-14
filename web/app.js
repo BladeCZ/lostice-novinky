@@ -19,6 +19,106 @@ let searchQuery = '';
 // Uchování pozice scrollování v přehledu
 let summaryScrollPos = 0;
 
+// Správa přečtených záznamů
+function getReadIds() {
+  try {
+    const raw = localStorage.getItem('lostice_read_ids');
+    return new Set(raw ? JSON.parse(raw) : []);
+  } catch (e) {
+    return new Set();
+  }
+}
+function saveReadIds(set) {
+  try {
+    localStorage.setItem('lostice_read_ids', JSON.stringify(Array.from(set)));
+  } catch (e) {}
+}
+let readIds = getReadIds();
+
+function isFirstRun() {
+  return localStorage.getItem('lostice_first_run_done') === null;
+}
+function setFirstRunDone() {
+  localStorage.setItem('lostice_first_run_done', 'true');
+}
+
+function checkInitialReadState() {
+  if (!isFirstRun()) return;
+  let changed = false;
+  for (const cat of Object.keys(LABELS)) {
+    const feed = feeds[cat];
+    if (feed && feed.items && feed.items.length > 2) {
+      for (let i = 2; i < feed.items.length; i++) {
+        if (!readIds.has(feed.items[i].id)) {
+          readIds.add(feed.items[i].id);
+          changed = true;
+        }
+      }
+    }
+  }
+  if (changed) {
+    saveReadIds(readIds);
+  }
+  if (Object.keys(feeds).length > 0) {
+    setFirstRunDone();
+  }
+}
+
+function markAsRead(id) {
+  if (!readIds.has(id)) {
+    readIds.add(id);
+    saveReadIds(readIds);
+    updateBadges();
+  }
+}
+
+function markAllAsRead() {
+  let anyAdded = false;
+  for (const cat of Object.keys(LABELS)) {
+    const f = feeds[cat];
+    if (f && f.items) {
+      for (const it of f.items) {
+        if (!readIds.has(it.id)) {
+          readIds.add(it.id);
+          anyAdded = true;
+        }
+      }
+    }
+  }
+  if (anyAdded) {
+    saveReadIds(readIds);
+  }
+  renderList();
+  updateBadges();
+}
+
+function updateBadges() {
+  let totalUnread = 0;
+  for (const cat of Object.keys(LABELS)) {
+    const f = feeds[cat];
+    const badgeEl = $(`badge-${cat}`);
+    if (!f || !f.items) {
+      if (badgeEl) badgeEl.hidden = true;
+      continue;
+    }
+    const unreadCount = f.items.filter(it => !readIds.has(it.id)).length;
+    totalUnread += unreadCount;
+    if (badgeEl) {
+      if (unreadCount > 0) {
+        badgeEl.textContent = unreadCount > 99 ? '99+' : unreadCount;
+        badgeEl.hidden = false;
+      } else {
+        badgeEl.hidden = true;
+      }
+    }
+  }
+  const markAllBtn = $('mark-all-read');
+  if (markAllBtn) {
+    markAllBtn.disabled = totalUnread === 0;
+    markAllBtn.style.opacity = totalUnread === 0 ? '0.35' : '1';
+  }
+}
+
 const fmtDate = d => { if (!d) return ''; const [y, m, dd] = d.split('-'); return `${+dd}. ${+m}. ${y}`; };
 const r1 = v => Math.round(v * 10) / 10;
 
@@ -35,24 +135,31 @@ function renderList() {
   const f = feeds[tab];
   if (!f) { list.innerHTML = '<div class="msg">Načítání…</div>'; return; }
   f.items.forEach(it => {
-    const c = document.createElement('div'); c.className = 'card';
+    const isUnread = !readIds.has(it.id);
+    const c = document.createElement('div');
+    c.className = 'card' + (isUnread ? ' unread' : '');
     const prev = it.text.replace(/\s+/g, ' ').slice(0, 160);
     let countBadge = '';
     if (it.resolutions && it.resolutions.length) {
-      countBadge = `<span style="float:right;font-size:0.8rem;color:var(--p);font-weight:600">${it.resolutions.length} bodů</span>`;
+      countBadge = `<span style="font-size:0.8rem;color:var(--p);font-weight:600">${it.resolutions.length} bodů</span>`;
     } else if (tab === 'hlas' && it.pages_count) {
-      countBadge = `<span style="float:right;font-size:0.8rem;color:var(--p);font-weight:600">${it.pages_count} stran A5</span>`;
+      countBadge = `<span style="font-size:0.8rem;color:var(--p);font-weight:600">${it.pages_count} stran A5</span>`;
     } else if (it.images && it.images.length) {
-      countBadge = `<span style="float:right;font-size:0.8rem;color:var(--p);font-weight:600">📷 ${it.images.length}</span>`;
+      countBadge = `<span style="font-size:0.8rem;color:var(--p);font-weight:600">📷 ${it.images.length}</span>`;
     } else if (it.files && it.files.length) {
-      countBadge = `<span style="float:right;font-size:0.8rem;color:var(--p);font-weight:600">📎 ${it.files.length}</span>`;
+      countBadge = `<span style="font-size:0.8rem;color:var(--p);font-weight:600">📎 ${it.files.length}</span>`;
     }
-    c.innerHTML = `<div class="d">${fmtDate(it.date)}${countBadge}</div><div class="t"></div><div class="p"></div>`;
+    const newBadge = isUnread ? '<span class="new-tag">NOVÉ</span>' : '';
+    c.innerHTML = `<div class="d"><span>${newBadge}${fmtDate(it.date)}</span>${countBadge}</div><div class="t"></div><div class="p"></div>`;
     c.children[1].textContent = it.title;
     c.children[2].textContent = prev;
-    c.onclick = () => openItem(it);
+    c.onclick = () => {
+      markAsRead(it.id);
+      openItem(it);
+    };
     list.appendChild(c);
   });
+  updateBadges();
 }
 
 function applyFont() {
@@ -339,7 +446,8 @@ $('rate-minus').onclick = () => setRate(Math.max(0.5, r1(rate - 0.1)));
 $('rate-plus').onclick = () => setRate(Math.min(2, r1(rate + 0.1)));
 $('back').onclick = () => history.back();
 window.onpopstate = () => { if (current) closeItem(); };
-$('refresh').onclick = async () => { await load(tab, true); if (!current) renderList(); };
+$('mark-all-read').onclick = () => { markAllAsRead(); };
+$('refresh').onclick = async () => { await load(tab, true); if (!current) renderList(); updateBadges(); };
 document.querySelectorAll('nav button').forEach(b => b.onclick = async () => {
   document.querySelectorAll('nav button').forEach(x => x.classList.remove('active'));
   b.classList.add('active'); tab = b.dataset.tab;
@@ -350,7 +458,13 @@ document.querySelectorAll('nav button').forEach(b => b.onclick = async () => {
 (async () => {
   renderList();
   await load(tab);
+  checkInitialReadState();
   renderList();
-  Object.keys(LABELS).filter(k => k !== tab).forEach(k => load(k));
+  for (const k of Object.keys(LABELS).filter(k => k !== tab)) {
+    load(k).then(() => {
+      checkInitialReadState();
+      updateBadges();
+    });
+  }
 })();
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');

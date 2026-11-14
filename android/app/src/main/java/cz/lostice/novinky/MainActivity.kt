@@ -30,11 +30,47 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     var offline by mutableStateOf(false)
         private set
 
+    var readIds by mutableStateOf<Set<String>>(prefs.getReadIds())
+        private set
+
     init {
         viewModelScope.launch {
             Category.values().forEach { c -> repo.cached(c)?.let { feeds[c] = it } }
+            checkInitialReadState()
             refresh()
         }
+    }
+
+    private fun checkInitialReadState() {
+        if (!prefs.isFirstRun() && feeds.isNotEmpty()) {
+            val toMark = mutableSetOf<String>()
+            feeds.values.forEach { feed ->
+                if (feed.items.size > 2) {
+                    toMark.addAll(feed.items.drop(2).map { it.id })
+                }
+            }
+            prefs.markAllRead(toMark)
+            prefs.setFirstRunCompleted()
+            readIds = prefs.getReadIds()
+        }
+    }
+
+    fun isItemRead(id: String): Boolean = id in readIds
+
+    fun markAsRead(id: String) {
+        prefs.markRead(id)
+        readIds = prefs.getReadIds()
+    }
+
+    fun markAllAsRead() {
+        val allIds = feeds.values.flatMap { it.items.map { it.id } }.toSet()
+        prefs.markAllRead(allIds)
+        readIds = prefs.getReadIds()
+    }
+
+    fun unreadCount(c: Category): Int {
+        val items = feeds[c]?.items ?: return 0
+        return items.count { it.id !in readIds }
     }
 
     fun refresh() {
@@ -47,10 +83,10 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                     failed = true
                 } else {
                     feeds[c] = feed
-                    // Otevření aplikace = položky jsou "viděné", upozornění se pošle jen na novější.
                     prefs.setSeen(c, (prefs.seen(c) ?: emptySet()) + feed.items.map { it.id })
                 }
             }
+            checkInitialReadState()
             offline = failed
             loading = false
         }

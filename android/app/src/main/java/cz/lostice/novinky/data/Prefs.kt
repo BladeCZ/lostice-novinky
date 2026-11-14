@@ -8,7 +8,7 @@ enum class ThemeMode {
     SYSTEM, LIGHT, DARK, OLED, CUSTOM
 }
 
-/** Ukládané nastavení: velikost textu, rychlost čtení, upozornění, témata a PDF prohlížeč. */
+/** Ukládané nastavení: velikost textu, rychlost čtení, upozornění, témata, barvy a přečtené položky. */
 class Prefs(context: Context) {
     private val sp = context.applicationContext.getSharedPreferences("novinky", Context.MODE_PRIVATE)
 
@@ -43,11 +43,43 @@ class Prefs(context: Context) {
         get() = sp.getInt("customHeaderColor", Color(0xFF0D3B66).toArgb())
         set(v) = sp.edit().putInt("customHeaderColor", v).apply()
 
+    /** Vlastní barva zvýraznění nového/nepřečteného příspěvku (pro ThemeMode.CUSTOM) */
+    var customUnreadColor: Int
+        get() = sp.getInt("customUnreadColor", Color(0xFFFEFCE8).toArgb())
+        set(v) = sp.edit().putInt("customUnreadColor", v).apply()
+
+    /** Vlastní barva odznáčku nového příspěvku / kolečka s číslem (pro ThemeMode.CUSTOM) */
+    var customBadgeColor: Int
+        get() = sp.getInt("customBadgeColor", Color(0xFFFACC15).toArgb())
+        set(v) = sp.edit().putInt("customBadgeColor", v).apply()
+
     fun notifyEnabled(c: Category) = sp.getBoolean("notify_${c.file}", false)
     fun setNotifyEnabled(c: Category, on: Boolean) = sp.edit().putBoolean("notify_${c.file}", on).apply()
 
     fun seen(c: Category): Set<String>? = sp.getStringSet("seen_${c.file}", null)?.toSet()
     fun setSeen(c: Category, ids: Set<String>) = sp.edit().putStringSet("seen_${c.file}", ids).apply()
+
+    // --- Přečtené položky pro uživatelské rozhraní ---
+
+    fun isFirstRun(): Boolean = sp.getBoolean("first_run_completed", false)
+    fun setFirstRunCompleted() = sp.edit().putBoolean("first_run_completed", true).apply()
+
+    fun getReadIds(): Set<String> = sp.getStringSet("read_ids", emptySet())?.toSet() ?: emptySet()
+
+    fun isRead(id: String): Boolean = id in getReadIds()
+
+    fun markRead(id: String) {
+        val current = (sp.getStringSet("read_ids", emptySet()) ?: emptySet()).toMutableSet()
+        if (current.add(id)) {
+            sp.edit().putStringSet("read_ids", current).apply()
+        }
+    }
+
+    fun markAllRead(ids: Collection<String>) {
+        val current = (sp.getStringSet("read_ids", emptySet()) ?: emptySet()).toMutableSet()
+        current.addAll(ids)
+        sp.edit().putStringSet("read_ids", current).apply()
+    }
 
     companion object {
         const val MIN_FONT = 0.7f

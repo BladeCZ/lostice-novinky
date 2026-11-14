@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -47,6 +48,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ColorLens
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.MenuBook
@@ -61,6 +63,8 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -228,12 +232,73 @@ private val SETTINGS_TAB get() = Category.values().size
 
 data class PdfTarget(val url: String, val title: String, val page: Int = 1)
 
+data class UnreadColors(
+    val cardBackground: Color,
+    val cardBorder: Color,
+    val badgeContainer: Color,
+    val badgeText: Color,
+    val tagBackground: Color,
+    val tagText: Color
+)
+
+@Composable
+private fun buildUnreadColors(prefs: Prefs): UnreadColors {
+    val isSysDark = isSystemInDarkTheme()
+    return when (prefs.themeMode) {
+        ThemeMode.SYSTEM -> if (isSysDark) darkUnreadColors() else lightUnreadColors()
+        ThemeMode.LIGHT -> lightUnreadColors()
+        ThemeMode.DARK -> darkUnreadColors()
+        ThemeMode.OLED -> oledUnreadColors()
+        ThemeMode.CUSTOM -> {
+            val unreadBg = Color(prefs.customUnreadColor)
+            val badgeColor = Color(prefs.customBadgeColor)
+            val isDarkBadge = badgeColor.luminance() < 0.45f
+            UnreadColors(
+                cardBackground = unreadBg,
+                cardBorder = badgeColor.copy(alpha = 0.7f),
+                badgeContainer = badgeColor,
+                badgeText = if (isDarkBadge) Color.White else Color(0xFF1E293B),
+                tagBackground = badgeColor,
+                tagText = if (isDarkBadge) Color.White else Color(0xFF1E293B)
+            )
+        }
+    }
+}
+
+private fun lightUnreadColors() = UnreadColors(
+    cardBackground = Color(0xFFFEFCE8),
+    cardBorder = Color(0xFFFDE047),
+    badgeContainer = Color(0xFFFACC15),
+    badgeText = Color(0xFF713F12),
+    tagBackground = Color(0xFFFACC15),
+    tagText = Color(0xFF713F12)
+)
+
+private fun darkUnreadColors() = UnreadColors(
+    cardBackground = Color(0xFF292524),
+    cardBorder = Color(0xFFEAB308),
+    badgeContainer = Color(0xFFFACC15),
+    badgeText = Color(0xFF1C1917),
+    tagBackground = Color(0xFFEAB308),
+    tagText = Color(0xFF1C1917)
+)
+
+private fun oledUnreadColors() = UnreadColors(
+    cardBackground = Color(0xFF1C1917),
+    cardBorder = Color(0xFFFACC15),
+    badgeContainer = Color(0xFFFACC15),
+    badgeText = Color.Black,
+    tagBackground = Color(0xFFFACC15),
+    tagText = Color.Black
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(vm: MainViewModel, startTab: Int) {
     // Dynamické sledování změn témat
     var themeStateTrigger by remember { mutableIntStateOf(0) }
     val colorScheme = buildColorScheme(vm.prefs)
+    val unreadColors = buildUnreadColors(vm.prefs)
 
     MaterialTheme(colorScheme = colorScheme) {
         var tab by rememberSaveable { mutableIntStateOf(startTab) }
@@ -299,6 +364,20 @@ fun App(vm: MainViewModel, startTab: Int) {
                     ),
                     actions = {
                         if (tab != SETTINGS_TAB) {
+                            val totalUnread = Category.values().sumOf { vm.unreadCount(it) }
+                            IconButton(
+                                onClick = {
+                                    vm.markAllAsRead()
+                                    Toast.makeText(context, "Všechna hlášení označena jako přečtená", Toast.LENGTH_SHORT).show()
+                                },
+                                enabled = totalUnread > 0
+                            ) {
+                                Icon(
+                                    Icons.Filled.DoneAll,
+                                    contentDescription = "Přečíst vše",
+                                    tint = if (totalUnread > 0) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.45f)
+                                )
+                            }
                             IconButton(onClick = { vm.refresh() }) {
                                 Icon(Icons.Filled.Refresh, contentDescription = "Obnovit")
                             }
@@ -309,10 +388,28 @@ fun App(vm: MainViewModel, startTab: Int) {
             bottomBar = {
                 NavigationBar {
                     Category.values().forEachIndexed { i, c ->
+                        val unread = vm.unreadCount(c)
                         NavigationBarItem(
                             selected = tab == i,
                             onClick = { tab = i },
-                            icon = { Icon(c.icon, contentDescription = c.label) },
+                            icon = {
+                                if (unread > 0) {
+                                    BadgedBox(
+                                        badge = {
+                                            Badge(
+                                                containerColor = unreadColors.badgeContainer,
+                                                contentColor = unreadColors.badgeText
+                                            ) {
+                                                Text(if (unread > 99) "99+" else unread.toString())
+                                            }
+                                        }
+                                    ) {
+                                        Icon(c.icon, contentDescription = c.label)
+                                    }
+                                } else {
+                                    Icon(c.icon, contentDescription = c.label)
+                                }
+                            },
                             label = { Text(c.shortLabel) }
                         )
                     }
@@ -340,7 +437,13 @@ fun App(vm: MainViewModel, startTab: Int) {
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                         )
                     }
-                    ItemList(vm.feeds[c]?.items, c, vm.loading) { item ->
+                    ItemList(
+                        items = vm.feeds[c]?.items,
+                        category = c,
+                        loading = vm.loading,
+                        vm = vm,
+                        unreadColors = unreadColors
+                    ) { item ->
                         openCat = c.ordinal
                         openId = item.id
                     }
@@ -351,7 +454,14 @@ fun App(vm: MainViewModel, startTab: Int) {
 }
 
 @Composable
-private fun ItemList(items: List<Item>?, category: Category, loading: Boolean, onClick: (Item) -> Unit) {
+private fun ItemList(
+    items: List<Item>?,
+    category: Category,
+    loading: Boolean,
+    vm: MainViewModel,
+    unreadColors: UnreadColors,
+    onClick: (Item) -> Unit
+) {
     if (items == null || items.isEmpty()) {
         Text(
             if (loading || items == null) "Načítání…" else "Žádné záznamy.",
@@ -364,20 +474,57 @@ private fun ItemList(items: List<Item>?, category: Category, loading: Boolean, o
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(items, key = { it.id }) { item ->
+            val isUnread = !vm.isItemRead(item.id)
+            val cardBg = if (isUnread) unreadColors.cardBackground else MaterialTheme.colorScheme.surface
+            val cardModifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    vm.markAsRead(item.id)
+                    onClick(item)
+                }
+                .then(
+                    if (isUnread) Modifier.border(1.5.dp, unreadColors.cardBorder, RoundedCornerShape(12.dp))
+                    else Modifier
+                )
+
             Card(
-                modifier = Modifier.fillMaxWidth().clickable { onClick(item) },
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(2.dp)
+                modifier = cardModifier,
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = cardBg),
+                elevation = CardDefaults.cardElevation(if (isUnread) 3.dp else 1.dp)
             ) {
                 Column(Modifier.padding(14.dp)) {
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        if (item.displayDate.isNotEmpty()) {
-                            Text(
-                                item.displayDate,
-                                style = MaterialTheme.typography.labelLarge,
-                                color = MaterialTheme.colorScheme.secondary,
-                                fontWeight = FontWeight.Bold
-                            )
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (isUnread) {
+                                Surface(
+                                    color = unreadColors.tagBackground,
+                                    shape = RoundedCornerShape(4.dp)
+                                ) {
+                                    Text(
+                                        "NOVÉ",
+                                        color = unreadColors.tagText,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                    )
+                                }
+                            }
+                            if (item.displayDate.isNotEmpty()) {
+                                Text(
+                                    item.displayDate,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
                         }
                         if (item.resolutions.isNotEmpty()) {
                             Text(
@@ -409,6 +556,7 @@ private fun ItemList(items: List<Item>?, category: Category, loading: Boolean, o
                             )
                         }
                     }
+                    Spacer(Modifier.height(4.dp))
                     Text(item.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
                     val preview = item.text.replace(Regex("\\s+"), " ").take(160)
                     if (preview.isNotEmpty()) {
@@ -1283,9 +1431,11 @@ private fun SettingsScreen(prefs: Prefs, onThemeChanged: () -> Unit) {
         CustomThemeDialog(
             prefs = prefs,
             onDismiss = { showCustomThemeDialog = false },
-            onApply = { headerColor, bgColor ->
+            onApply = { headerColor, bgColor, unreadBgColor, badgeColor ->
                 prefs.customHeaderColor = headerColor.toArgb()
                 prefs.customBgColor = bgColor.toArgb()
+                prefs.customUnreadColor = unreadBgColor.toArgb()
+                prefs.customBadgeColor = badgeColor.toArgb()
                 prefs.themeMode = ThemeMode.CUSTOM
                 selectedTheme = ThemeMode.CUSTOM
                 showCustomThemeDialog = false
@@ -1325,16 +1475,18 @@ private fun ThemeOptionItem(
     }
 }
 
-/** Dialog pro přizpůsobení vlastních barev pozadí a hlavičky */
+/** Dialog pro přizpůsobení vlastních barev pozadí, hlavičky, nepřečtených karet a odznáčku */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun CustomThemeDialog(
     prefs: Prefs,
     onDismiss: () -> Unit,
-    onApply: (header: Color, bg: Color) -> Unit
+    onApply: (header: Color, bg: Color, unreadBg: Color, badge: Color) -> Unit
 ) {
     var curHeader by remember { mutableStateOf(Color(prefs.customHeaderColor)) }
     var curBg by remember { mutableStateOf(Color(prefs.customBgColor)) }
+    var curUnreadBg by remember { mutableStateOf(Color(prefs.customUnreadColor)) }
+    var curBadge by remember { mutableStateOf(Color(prefs.customBadgeColor)) }
 
     val headerPresets = listOf(
         Color(0xFF0D3B66), // Loštická modrá
@@ -1359,37 +1511,179 @@ private fun CustomThemeDialog(
         Color(0xFF000000)  // Čistě černá
     )
 
+    val unreadPresets = listOf(
+        Color(0xFFFEFCE8), // Světle žlutá (výchozí)
+        Color(0xFFFEF3C7), // Teplý jantar
+        Color(0xFFF0FDF4), // Jemná mátová
+        Color(0xFFEFF6FF), // Jemná blankytná
+        Color(0xFFFAF5FF), // Jemná levandulová
+        Color(0xFF292524), // Tmavý kámen
+        Color(0xFF1C1917), // Hluboký antracit
+        Color(0xFF1E3A5F)  // Noční modř
+    )
+
+    val badgePresets = listOf(
+        Color(0xFFFACC15), // Jasně žlutá (výchozí)
+        Color(0xFFEAB308), // Zlatavá
+        Color(0xFFF97316), // Oranžová
+        Color(0xFFEF4444), // Červená
+        Color(0xFF10B981), // Smaragdově zelená
+        Color(0xFF00AEEF), // Loštická tyrkysová
+        Color(0xFF8B5CF6), // Fialová
+        Color(0xFFEC4899)  // Růžová
+    )
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Přizpůsobení vlastního tématu", fontWeight = FontWeight.Bold) },
         text = {
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 // Živý náhled
-                Text("Náhled:", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                Text("Živý náhled tématu:", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                 Spacer(Modifier.height(4.dp))
                 Surface(
-                    modifier = Modifier.fillMaxWidth().height(100.dp),
-                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(10.dp),
                     color = curBg,
                     shadowElevation = 2.dp
                 ) {
                     Column {
                         // Header náhled
                         Box(
-                            Modifier.fillMaxWidth().height(36.dp).background(curHeader).padding(horizontal = 10.dp),
+                            Modifier
+                                .fillMaxWidth()
+                                .height(40.dp)
+                                .background(curHeader)
+                                .padding(horizontal = 12.dp),
                             contentAlignment = Alignment.CenterStart
                         ) {
-                            Text(
-                                "Hlavička aplikace",
-                                color = if (curHeader.luminance() < 0.45f) Color.White else Color.Black,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                            Row(
+                                Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    "Loštice novinky",
+                                    color = if (curHeader.luminance() < 0.45f) Color.White else Color.Black,
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                    Icon(
+                                        Icons.Filled.DoneAll,
+                                        contentDescription = null,
+                                        tint = if (curHeader.luminance() < 0.45f) Color.White else Color.Black,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Icon(
+                                        Icons.Filled.Refresh,
+                                        contentDescription = null,
+                                        tint = if (curHeader.luminance() < 0.45f) Color.White else Color.Black,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                            }
                         }
-                        // Obsah náhled
-                        Box(Modifier.fillMaxSize().padding(8.dp), contentAlignment = Alignment.Center) {
-                            val textColor = if (curBg.luminance() < 0.45f) Color.White else Color(0xFF0F172A)
-                            Text("Text na zvoleném pozadí", color = textColor, fontSize = 12.sp)
+
+                        Column(Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            // Náhled nepřečteného příspěvku (zvýrazněný)
+                            Surface(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .border(1.5.dp, curBadge.copy(alpha = 0.7f), RoundedCornerShape(8.dp)),
+                                color = curUnreadBg,
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Column(Modifier.padding(8.dp)) {
+                                    Row(
+                                        Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Surface(
+                                            color = curBadge,
+                                            shape = RoundedCornerShape(3.dp)
+                                        ) {
+                                            Text(
+                                                "NOVÉ",
+                                                color = if (curBadge.luminance() < 0.45f) Color.White else Color(0xFF1E293B),
+                                                fontSize = 9.sp,
+                                                fontWeight = FontWeight.ExtraBold,
+                                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
+                                            )
+                                        }
+                                        Text(
+                                            "dnes",
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = if (curUnreadBg.luminance() < 0.45f) Color(0xFF38BDF8) else Color(0xFF0284C7)
+                                        )
+                                    }
+                                    Spacer(Modifier.height(3.dp))
+                                    Text(
+                                        "Nový příspěvek (zvýrazněný)",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 12.sp,
+                                        color = if (curUnreadBg.luminance() < 0.45f) Color.White else Color(0xFF0F172A)
+                                    )
+                                }
+                            }
+
+                            // Náhled přečteného příspěvku
+                            val readCardBg = if (curBg.luminance() < 0.45f) {
+                                curBg.copy(alpha = 1f).compositeOver(Color.White.copy(alpha = 0.08f))
+                            } else {
+                                Color.White
+                            }
+                            Surface(
+                                modifier = Modifier.fillMaxWidth(),
+                                color = readCardBg,
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Column(Modifier.padding(8.dp)) {
+                                    Text(
+                                        "včera",
+                                        fontSize = 11.sp,
+                                        color = Color.Gray
+                                    )
+                                    Spacer(Modifier.height(3.dp))
+                                    Text(
+                                        "Běžný přečtený příspěvek",
+                                        fontWeight = FontWeight.Medium,
+                                        fontSize = 12.sp,
+                                        color = if (curBg.luminance() < 0.45f) Color(0xFFE2E8F0) else Color(0xFF1E293B)
+                                    )
+                                }
+                            }
+
+                            // Náhled záložky s odznáčkem
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(readCardBg, RoundedCornerShape(6.dp))
+                                    .padding(vertical = 4.dp, horizontal = 12.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    "Indikátor nepřečtených v záložce:",
+                                    fontSize = 11.sp,
+                                    color = if (curBg.luminance() < 0.45f) Color(0xFFCBD5E1) else Color(0xFF475569)
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .size(22.dp)
+                                        .background(curBadge, CircleShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        "3",
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = if (curBadge.luminance() < 0.45f) Color.White else Color(0xFF1E293B)
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -1397,7 +1691,7 @@ private fun CustomThemeDialog(
                 Spacer(Modifier.height(16.dp))
 
                 // Výběr barvy hlavičky
-                Text("Barva hlavičky (Top Bar):", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                Text("Barva hlavičky (Top Bar):", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                 Spacer(Modifier.height(6.dp))
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     headerPresets.forEach { color ->
@@ -1409,10 +1703,10 @@ private fun CustomThemeDialog(
                     }
                 }
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(14.dp))
 
                 // Výběr barvy pozadí
-                Text("Barva pozadí (Background):", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                Text("Barva pozadí (Background):", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                 Spacer(Modifier.height(6.dp))
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     bgPresets.forEach { color ->
@@ -1423,10 +1717,40 @@ private fun CustomThemeDialog(
                         )
                     }
                 }
+
+                Spacer(Modifier.height(14.dp))
+
+                // Výběr barvy pozadí nového nepřečteného příspěvku
+                Text("Barva pozadí nového příspěvku:", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                Spacer(Modifier.height(6.dp))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    unreadPresets.forEach { color ->
+                        ColorCircle(
+                            color = color,
+                            isSelected = curUnreadBg == color,
+                            onClick = { curUnreadBg = color }
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(14.dp))
+
+                // Výběr barvy odznáčku / kolečka nepřečtených
+                Text("Barva kolečka a štítku novinek:", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                Spacer(Modifier.height(6.dp))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    badgePresets.forEach { color ->
+                        ColorCircle(
+                            color = color,
+                            isSelected = curBadge == color,
+                            onClick = { curBadge = color }
+                        )
+                    }
+                }
             }
         },
         confirmButton = {
-            Button(onClick = { onApply(curHeader, curBg) }) {
+            Button(onClick = { onApply(curHeader, curBg, curUnreadBg, curBadge) }) {
                 Text("Uložit téma")
             }
         },

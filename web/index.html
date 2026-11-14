@@ -13,7 +13,8 @@
 <header>
   <button id="back" hidden aria-label="Zpět">←</button>
   <h1 id="title">Loštice novinky</h1>
-  <button id="refresh" aria-label="Obnovit">⟳</button>
+  <button id="mark-all-read" aria-label="Přečíst vše" title="Označit vše jako přečtené">✓✓</button>
+  <button id="refresh" aria-label="Obnovit" title="Obnovit">⟳</button>
 </header>
 
 <main id="list-view"><div id="list"></div></main>
@@ -67,11 +68,11 @@
 </main>
 
 <nav>
-  <button data-tab="aktuality" class="active">📰<span>Aktuality</span></button>
-  <button data-tab="hlaseni">📢<span>Rozhlas</span></button>
-  <button data-tab="rm">🏛️<span>Rada</span></button>
-  <button data-tab="zm">👥<span>Zastupitelstvo</span></button>
-  <button data-tab="hlas">📖<span>Zpravodaj</span></button>
+  <button data-tab="aktuality" class="active"><span class="nav-icon-wrap">📰<span class="nav-badge" id="badge-aktuality" hidden></span></span><span>Aktuality</span></button>
+  <button data-tab="hlaseni"><span class="nav-icon-wrap">📢<span class="nav-badge" id="badge-hlaseni" hidden></span></span><span>Rozhlas</span></button>
+  <button data-tab="rm"><span class="nav-icon-wrap">🏛️<span class="nav-badge" id="badge-rm" hidden></span></span><span>Rada</span></button>
+  <button data-tab="zm"><span class="nav-icon-wrap">👥<span class="nav-badge" id="badge-zm" hidden></span></span><span>Zastupitelstvo</span></button>
+  <button data-tab="hlas"><span class="nav-icon-wrap">📖<span class="nav-badge" id="badge-hlas" hidden></span></span><span>Zpravodaj</span></button>
 </nav>
 
 <script src="app.js"></script>
