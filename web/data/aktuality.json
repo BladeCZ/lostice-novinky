@@ -1,7 +1,21 @@
 {
- "updated": "2026-11-19T14:25:51+00:00",
+ "updated": "2026-11-20T07:20:34+00:00",
  "source": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/",
  "items": [
+  {
+   "id": "2689",
+   "title": "MŠ Loštice - Papír za Papír",
+   "date": "2026-11-20",
+   "date_insert": "20. 11. 2026 8:14",
+   "date_update": "20. 11. 2026 8:14",
+   "url": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/ms-lostice-papir-za-papir-2689cs.html",
+   "page": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/ms-lostice-papir-za-papir-2689cs.html",
+   "text": "MŠ Loštice ve spolupráci s Městem Loštice vyhlašují školkovou akci \"Papír za papír\". Akce se uskuteční ve dnech 25. a 26. 11. 2026 v době provozu mateřské školy. Papír odložte, prosím, do označeného přístřešku před MŠ. Děkujeme\n\nDatum vložení: 20. 11. 2026 8:14\nDatum poslední aktualizace: 20. 11. 2026 8:14",
+   "images": [
+    "https://www.mu-lostice.cz/evt_image.php?img=9323&v=1793780201"
+   ],
+   "files": []
+  },
   {
    "id": "3482",
    "title": "Evropský týden testování HIV, žloutenky a dalších infekčních onemocnění",
@@ -685,25 +699,6 @@
     {
      "name": "Tisková zpráva.pdf",
      "url": "https://www.mu-lostice.cz/evt_file.php?file=8582"
-    }
-   ]
-  },
-  {
-   "id": "3143",
-   "title": "Nařízení Státní veterinární správy mimořádná veterinární opatření",
-   "date": "2026-02-27",
-   "date_insert": "27. 2. 2026 18:14",
-   "date_update": "24. 3. 2026 10:45",
-   "url": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/narizeni-statni-veterinarni-spravy-mimoradna-veterinarni-opatreni-3143cs.html",
-   "page": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/narizeni-statni-veterinarni-spravy-mimoradna-veterinarni-opatreni-3143cs.html",
-   "text": "Mimořádná veterinární opatření jsou vydávána na základě potvrzení výskytu nebezpečné nákazy – newcastelské choroby drůbeže – v chovu ptáků chovaných v zajetí s počtem kusů větším než 50, v katastrálním území Řimice (745626), okres Olomouc, v Olomouckém kraji.\n\nKrajská veterinární správa Olomouc oznamuje občanům, že byl potvrzen výskyt nebezpečné nákazy drůbeže v katastrálním území Řimice. Katastrální území města Loštice a místní části Žádlovice se nachází v uzavřeném pásmu dozoru. Podrobné informace a formulář k vyplnění najdete na stránkách města - úřední deska\n\nhttps://ude.ginis.cloud/detail-dokumentu.php...\n\nhttps://ude.ginis.cloud/detail-dokumentu.php?id=MELO0B02DFSW-0&deska=MELOAWO0A01K&kategorie=Ozn%C3%A1men%C3%AD\n\nFormulář pro soupis chovatelů v pásmu dozoru:\n\nhttps://www.svscr.cz/newcastleska-choroba-stavy.../...\n\nŽádáme veřejnost zejména všechny chovatele drůbeže nebo jiného ptactva chovaného v zajetí, lovce, pozorovatele ptáků, aby dbali pokynů Nařízení Státní veterinární správy Č. j. SVS/2026/034998 a Nařízení Státní veterinární správy č.j. SVS/2026/052338 ze dne 24.03.2026 zveřejněné na úřední desce města.\n\nDatum vložení: 27. 2. 2026 18:14\nDatum poslední aktualizace: 24. 3. 2026 10:45",
-   "images": [
-    "https://www.mu-lostice.cz/evt_image.php?img=8568&v=1772212568"
-   ],
-   "files": [
-    {
-     "name": "Nařízení SVS ze dne 24.03.2026",
-     "url": "https://www.mu-lostice.cz/evt_file.php?file=8618"
     }
    ]
   }
