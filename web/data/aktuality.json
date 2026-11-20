@@ -1,7 +1,26 @@
 {
- "updated": "2026-11-20T07:20:34+00:00",
+ "updated": "2026-11-20T14:00:00+00:00",
  "source": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/",
  "items": [
+  {
+   "id": "3484",
+   "title": "Pozvánka na 2. zasedání Zastupitelstva města Loštice dne 30. 11. 2026",
+   "date": "2026-11-20",
+   "date_insert": "20. 11. 2026 10:04",
+   "date_update": "20. 11. 2026 10:07",
+   "url": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/pozvanka-na-2-zasedani-zastupitelstva-mesta-lostice-dne-30-11-2026-3484cs.html",
+   "page": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/pozvanka-na-2-zasedani-zastupitelstva-mesta-lostice-dne-30-11-2026-3484cs.html",
+   "text": "Pozvánka na 2. zasedání Zastupitelstva města Loštice dne 30. 11. 2026\n\nDatum vložení: 20. 11. 2026 10:04\nDatum poslední aktualizace: 20. 11. 2026 10:07",
+   "images": [
+    "https://www.mu-lostice.cz/evt_image.php?img=9353&v=1795165598"
+   ],
+   "files": [
+    {
+     "name": "Pozvánka na ZM",
+     "url": "https://www.mu-lostice.cz/evt_file.php?file=9352"
+    }
+   ]
+  },
   {
    "id": "2689",
    "title": "MŠ Loštice - Papír za Papír",
@@ -680,25 +699,6 @@
     {
      "name": "Tisková zpráva společnosti A.W. Loštice",
      "url": "https://www.mu-lostice.cz/evt_file.php?file=8602"
-    }
-   ]
-  },
-  {
-   "id": "3151",
-   "title": "dTEST - Tisková zpráva - Jak se bránit podvodným zprávám",
-   "date": "2026-03-10",
-   "date_insert": "10. 3. 2026 11:02",
-   "date_update": "10. 3. 2026 11:06",
-   "url": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/dtest-tiskova-zprava-jak-se-branit-podvodnym-zpravam-3151cs.html",
-   "page": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/dtest-tiskova-zprava-jak-se-branit-podvodnym-zpravam-3151cs.html",
-   "text": "Podvodné zprávy, které se tváří jako žádosti od blízkých, se stávají stále častějšími. Mnoho lidí se setkalo s podvodníky, kteří se snaží získat peníze pod záminkou, že potřebují pomoc. V takových situacích je důležité ověřit, zda je zpráva opravdu od známé osoby, například krátkým telefonním hovore\n\nOdborníci doporučují, abyste nereagovali na zprávy z neznámých čísel a v případě pochybností raději zavolali. Jakékoli žádosti o peníze by měly vyžadovat dodatečné ověření identity. Zprávy mohou přicházet různými kanály, a proto je důležité být obezřetný a chránit své osobní údaje. V případě podvodů je doporučeno obrátit se na policii a sdílet své zkušenosti s ostatními.\n\nDatum vložení: 10. 3. 2026 11:02\nDatum poslední aktualizace: 10. 3. 2026 11:06",
-   "images": [
-    "https://www.mu-lostice.cz/evt_image.php?img=8584&v=1773137173"
-   ],
-   "files": [
-    {
-     "name": "Tisková zpráva.pdf",
-     "url": "https://www.mu-lostice.cz/evt_file.php?file=8582"
     }
    ]
   }
