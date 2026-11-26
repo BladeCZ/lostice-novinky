@@ -1,7 +1,28 @@
 {
- "updated": "2026-11-25T15:35:41+00:00",
+ "updated": "2026-11-26T15:12:58+00:00",
  "source": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/",
  "items": [
+  {
+   "id": "3494",
+   "title": "INNOFUND nadační fond - projekt \"BE IN - Mladí na cestě za zkušenostmi a prací“",
+   "date": "2026-11-26",
+   "date_insert": "26. 11. 2026 14:26",
+   "date_update": "26. 11. 2026 14:32",
+   "url": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/innofund-nadacni-fond-projekt-be-in-mladi-na-ceste-za-zkusenostmi-a-praci-3494cs.html",
+   "page": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/innofund-nadacni-fond-projekt-be-in-mladi-na-ceste-za-zkusenostmi-a-praci-3494cs.html",
+   "text": "nový projekt „BE IN - Mladí na cestě za zkušenostmi a prací“, který je realizován od února 2026 INNOFUND nadačním fondem. Nyní rozjíždíme II. běh projektu.\n\nDatum vložení: 26. 11. 2026 14:26\nDatum poslední aktualizace: 26. 11. 2026 14:32",
+   "images": [
+    "https://www.mu-lostice.cz/evt_image.php?img=9365&v=1795699900",
+    "https://www.mu-lostice.cz/evt_image.php?img=9367",
+    "https://www.mu-lostice.cz/evt_image.php?img=9367&v=1795699938"
+   ],
+   "files": [
+    {
+     "name": "projekt nadace",
+     "url": "https://www.mu-lostice.cz/evt_file.php?file=9366"
+    }
+   ]
+  },
   {
    "id": "3486",
    "title": "Pomozte nám připravit sociální služby, které Vy a Vaši blízcí skutečně potřebujete",
@@ -674,25 +695,6 @@
     "https://www.mu-lostice.cz/evt_image.php?img=8610&v=1774009223"
    ],
    "files": []
-  },
-  {
-   "id": "3170",
-   "title": "Hlas Loštic - jaro 2026",
-   "date": "2026-03-20",
-   "date_insert": "20. 3. 2026 8:06",
-   "date_update": "20. 3. 2026 8:07",
-   "url": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/hlas-lostic-jaro-2026-3170cs.html",
-   "page": "https://www.mu-lostice.cz/obcan/aktualne/aktuality/hlas-lostic-jaro-2026-3170cs.html",
-   "text": "Hlas Loštic - jaro 2026 ke stažení.\n\nDatum vložení: 20. 3. 2026 8:06\nDatum poslední aktualizace: 20. 3. 2026 8:07",
-   "images": [
-    "https://www.mu-lostice.cz/evt_image.php?img=8607&v=1773990433"
-   ],
-   "files": [
-    {
-     "name": "Hlas Loštic jaro 2026",
-     "url": "https://www.mu-lostice.cz/evt_file.php?file=8608"
-    }
-   ]
   }
  ]
 }
